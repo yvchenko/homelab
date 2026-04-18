@@ -19,5 +19,5 @@ services:
       - arr_arr
 
 networks:
-  arr:
+  arr_arr:
     external: true
