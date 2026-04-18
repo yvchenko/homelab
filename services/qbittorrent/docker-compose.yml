@@ -3,6 +3,7 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     restart: unless-stopped
+    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
@@ -11,13 +12,3 @@ services:
     volumes:
       - /opt/appdata/qbittorrent:/config
       - /mnt/media/torrents:/media/torrents
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
-    networks:
-      - arr_arr
-
-networks:
-  arr_arr:
-    external: true
