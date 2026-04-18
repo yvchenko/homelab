@@ -1,0 +1,13 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /opt/appdata/jellyfin/config:/config
+      - /opt/appdata/jellyfin/cache:/cache
+      - /mnt/media/movies:/media/movies:ro
+      - /mnt/media/tv:/media/tv:ro
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://kostyan-server.salmon-halfmoon.ts.net:8096
