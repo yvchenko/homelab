@@ -103,3 +103,14 @@ In Radarr → Settings → Download Clients → Remote Path Mappings → Add:
 - Local Path: `/media/torrents`
 
 Repeat in Sonarr with the same values.
+
+### 7. Configure save paths
+
+In qBittorrent → Settings → Downloads:
+- Default Save Path: `/media/torrents`
+
+Then set up per-category paths so Radarr and Sonarr downloads land in separate
+subdirectories. In the left sidebar, right click Categories → Add Category:
+
+- Name: `radarr`, Save Path: `/media/torrents/radarr`
+- Name: `sonarr`, Save Path: `/media/torrents/sonarr`
