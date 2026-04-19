@@ -12,3 +12,4 @@ A homelab setup for various shenanigans.
 | Jellyseerr  | http://kostyan-server.salmon-halfmoon.ts.net:5055 |
 | QBittorrent | http://kostyan-server.salmon-halfmoon.ts.net:8080 |
 | LibreChat   | http://kostyan-server.salmon-halfmoon.ts.net:3080 |
+| Kavita      | http://kostyan-server.salmon-halfmoon.ts.net:5000 |
