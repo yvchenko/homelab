@@ -19,14 +19,16 @@ services:
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
     volumes:
       - type: bind
-        source: /opt/appdata/librechat/.env
+        source: ./.env
         target: /app/.env
       - type: bind
-        source: /opt/appdata/librechat/librechat.yaml
+        source: ./librechat.yaml
         target: /app/librechat.yaml
       - /opt/appdata/librechat/images:/app/client/public/images
       - /opt/appdata/librechat/uploads:/app/uploads
       - /opt/appdata/librechat/logs:/app/logs
+    env_file:
+      - .env
 
   mongodb:
     container_name: chat-mongodb
@@ -36,6 +38,8 @@ services:
     volumes:
       - /opt/appdata/librechat/db:/data/db
     command: mongod --noauth
+    env_file:
+      - .env
 
   meilisearch:
     container_name: chat-meilisearch
@@ -48,6 +52,8 @@ services:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
     volumes:
       - /opt/appdata/librechat/meili_data:/meili_data
+    env_file:
+      - .env
 
   vectordb:
     container_name: vectordb
@@ -69,3 +75,5 @@ services:
     restart: always
     depends_on:
       - vectordb
+    env_file:
+      - .env

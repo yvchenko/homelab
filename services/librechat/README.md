@@ -39,8 +39,8 @@ Image published to Docker Hub as `yvchenko/librechat-custom-tagging:latest`.
 
 | Purpose          | Host path                               | Container path              |
 |------------------|-----------------------------------------|-----------------------------|
-| Config           | `/opt/appdata/librechat/.env`           | `/app/.env`                 |
-| LibreChat config | `/opt/appdata/librechat/librechat.yaml` | `/app/librechat.yaml`       |
+| Config           | `services/librechat/.env`           | `/app/.env`                 |
+| LibreChat config | `services/librechat/librechat.yaml` | `/app/librechat.yaml`       |
 | Images           | `/opt/appdata/librechat/images`         | `/app/client/public/images` |
 | Uploads          | `/opt/appdata/librechat/uploads`        | `/app/uploads`              |
 | Logs             | `/opt/appdata/librechat/logs`           | `/app/logs`                 |
