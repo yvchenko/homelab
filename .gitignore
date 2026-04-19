@@ -1,1 +1,2 @@
-librechat/.env
+.env
+*.env
