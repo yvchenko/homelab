@@ -55,8 +55,8 @@ Image published to Docker Hub as `yvchenko/librechat-custom-tagging:latest`.
 sudo mkdir -p /opt/appdata/librechat/{images,uploads,logs,db,meili_data,pgdata}
 
 # Copy and fill in config files
-cp .env.example /opt/appdata/librechat/.env
-# edit /opt/appdata/librechat/.env with your values
+cp .env.example .env
+# edit .env with your values
 
 # Start
 docker compose up -d
