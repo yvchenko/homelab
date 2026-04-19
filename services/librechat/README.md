@@ -37,16 +37,16 @@ Image published to Docker Hub as `yvchenko/librechat-custom-tagging:latest`.
 
 ## Paths
 
-| Purpose | Host path | Container path |
-|---------|-----------|----------------|
-| Config | `/opt/appdata/librechat/.env` | `/app/.env` |
-| LibreChat config | `/opt/appdata/librechat/librechat.yaml` | `/app/librechat.yaml` |
-| Images | `/opt/appdata/librechat/images` | `/app/client/public/images` |
-| Uploads | `/opt/appdata/librechat/uploads` | `/app/uploads` |
-| Logs | `/opt/appdata/librechat/logs` | `/app/logs` |
-| MongoDB data | `/opt/appdata/librechat/db` | `/data/db` |
-| MeiliSearch data | `/opt/appdata/librechat/meili_data` | `/meili_data` |
-| pgvector data | `/opt/appdata/librechat/pgdata` | `/var/lib/postgresql/data` |
+| Purpose          | Host path                               | Container path              |
+|------------------|-----------------------------------------|-----------------------------|
+| Config           | `/opt/appdata/librechat/.env`           | `/app/.env`                 |
+| LibreChat config | `/opt/appdata/librechat/librechat.yaml` | `/app/librechat.yaml`       |
+| Images           | `/opt/appdata/librechat/images`         | `/app/client/public/images` |
+| Uploads          | `/opt/appdata/librechat/uploads`        | `/app/uploads`              |
+| Logs             | `/opt/appdata/librechat/logs`           | `/app/logs`                 |
+| MongoDB data     | `/opt/appdata/librechat/db`             | `/data/db`                  |
+| MeiliSearch data | `/opt/appdata/librechat/meili_data`     | `/meili_data`               |
+| pgvector data    | `/opt/appdata/librechat/pgdata`         | `/var/lib/postgresql/data`  |
 
 ## First run
 
