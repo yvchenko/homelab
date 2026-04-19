@@ -65,8 +65,6 @@ services:
     restart: always
     volumes:
       - /opt/appdata/librechat/pgdata:/var/lib/postgresql/data
-    env_file:
-      - /opt/appdata/librechat/.env
 
   rag_api:
     container_name: rag_api
