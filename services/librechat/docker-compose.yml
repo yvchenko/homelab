@@ -27,6 +27,8 @@ services:
       - /opt/appdata/librechat/images:/app/client/public/images
       - /opt/appdata/librechat/uploads:/app/uploads
       - /opt/appdata/librechat/logs:/app/logs
+    env_file:
+      - /opt/appdata/librechat/.env
 
   mongodb:
     container_name: chat-mongodb
@@ -36,6 +38,8 @@ services:
     volumes:
       - /opt/appdata/librechat/db:/data/db
     command: mongod --noauth
+    env_file:
+      - /opt/appdata/librechat/.env
 
   meilisearch:
     container_name: chat-meilisearch
@@ -48,6 +52,8 @@ services:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
     volumes:
       - /opt/appdata/librechat/meili_data:/meili_data
+    env_file:
+      - /opt/appdata/librechat/.env
 
   vectordb:
     container_name: vectordb
@@ -59,6 +65,8 @@ services:
     restart: always
     volumes:
       - /opt/appdata/librechat/pgdata:/var/lib/postgresql/data
+    env_file:
+      - /opt/appdata/librechat/.env
 
   rag_api:
     container_name: rag_api
