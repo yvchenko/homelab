@@ -57,7 +57,6 @@ sudo mkdir -p /opt/appdata/librechat/{images,uploads,logs,db,meili_data,pgdata}
 # Copy and fill in config files
 cp .env.example /opt/appdata/librechat/.env
 # edit /opt/appdata/librechat/.env with your values
-cp librechat.yaml.example /opt/appdata/librechat/librechat.yaml
 
 # Start
 docker compose up -d
