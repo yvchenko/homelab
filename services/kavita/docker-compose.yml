@@ -1,6 +1,6 @@
 services:
   kavita:
-    image: jvmilazz0/kavita:latest
+    image: jvmilazz0/kavita:0.8.5
     container_name: kavita
     restart: unless-stopped
     environment:
