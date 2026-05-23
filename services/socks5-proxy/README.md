@@ -2,12 +2,6 @@
 
 Lightweight SOCKS5 proxy running on Kostyan's server. Used to route qBittorrent traffic on the Spain node through the Ukrainian IP over Tailscale.
 
-## Access
-
-| Service     | Address                                      |
-|-------------|----------------------------------------------|
-| SOCKS5 proxy | `kostyan-server.salmon-halfmoon.ts.net:1080` |
-
 ## Stack
 
 | Component | Image                      |

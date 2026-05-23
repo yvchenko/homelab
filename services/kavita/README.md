@@ -1,13 +1,6 @@
 # Kavita
 
-Self-hosted manga and ebook library.
-
-## Access
-
-| Interface | URL |
-|-----------|-----|
-| Web UI | http://kostyan-server.salmon-halfmoon.ts.net:5000 |
-
+Self-hosted manga and ebook library. Runs on Kostya's node (`kostyan-server`).
 Accessible over Tailscale only — not exposed to the public internet.
 
 ## Stack

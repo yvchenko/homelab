@@ -1,13 +1,7 @@
 # LibreChat
 
 Self-hosted AI frontend running on a custom Docker image with behavioral patches
-applied on top of the official upstream build. 
-## Access
-
-| Interface | URL |
-|-----------|-----|
-| Web UI | http://kostyan-server.salmon-halfmoon.ts.net:3080 |
-
+applied on top of the official upstream build. Runs on Nat's node (`nat-server`). 
 Accessible over Tailscale only — not exposed to the public internet.
 
 ## Stack

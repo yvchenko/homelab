@@ -1,15 +1,8 @@
 # Jellyfin
 
-Self-hosted media server. Serves
-media stored on the HDD mount at `/mnt/media`.
-
-## Access
-
-| Interface | URL |
-|-----------|-----|
-| Web UI | http://kostyan-server.salmon-halfmoon.ts.net:8096 |
-
-Accessible over Tailscale only — not exposed to the public internet.
+Self-hosted media server. Runs on Kostya's node (`kostyan-server`) and on Nat's 
+node (`nat-server`) simultaneously. Serves media stored on the HDD mount at 
+`/mnt/media`. Accessible over Tailscale only — not exposed to the public internet.
 
 ## Stack
 

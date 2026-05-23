@@ -1,17 +1,7 @@
 # Arr Stack
 
-Media acquisition and request management services. Runs on Kostyan's node
-(`kostyan-server`).
-
-## Access
-
-| Service | URL |
-|---------|-----|
-| Radarr | http://kostyan-server.salmon-halfmoon.ts.net:7878 |
-| Sonarr | http://kostyan-server.salmon-halfmoon.ts.net:8989 |
-| Prowlarr | http://kostyan-server.salmon-halfmoon.ts.net:9696 |
-| Jellyseerr | http://kostyan-server.salmon-halfmoon.ts.net:5055 |
-
+Media acquisition and request management services. Runs on Kostya's node
+(`kostyan-server`) and on Nat's node (`nat-server`) simultaneously. 
 Accessible over Tailscale only — not exposed to the public internet.
 
 ## Stack
@@ -66,8 +56,6 @@ docker compose logs -f
 
 ## Post-startup configuration
 
-## Post-startup configuration
-
 Follow this order — Prowlarr must be configured before Radarr/Sonarr, and
 both must be configured before Jellyseerr.
 
@@ -82,7 +70,7 @@ do not search indexers directly — they go through Prowlarr.
    need none; private trackers require a passkey or cookie from your account)
 4. Click Test — if it passes, Save
 5. Repeat for additional indexers
-6. Prowlarr will sync the indexers to Radarr and Sonarr automatically
+6. Add Radarr and Sonarr via Prowlarr → Apps → Add App
 
 ### 2. Radarr — connect to Prowlarr and set root folder
 

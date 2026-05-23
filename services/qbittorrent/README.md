@@ -1,14 +1,8 @@
 # qBittorrent
 
-Torrent client. Runs on `kostyan-server`.
-
-## Access
-
-| Interface | URL |
-|-----------|-----|
-| Web UI | http://kostyan-server.salmon-halfmoon.ts.net:8080 |
-
-Accessible over Tailscale only — not exposed to the public internet.
+Torrent client. Runs on Kostya's node (`kostyan-server`) and on Nat's node 
+(`nat-server`) simultaneously. Accessible over Tailscale only — not exposed to 
+the public internet.
 
 ## Stack
 
