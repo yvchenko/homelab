@@ -1,8 +1,7 @@
 # qBittorrent
 
 Torrent client. Runs on Kostya's node (`kostyan-server`) and on Nat's node 
-(`nat-server`) simultaneously. Accessible over Tailscale only — not exposed to 
-the public internet.
+(`nat-server`) simultaneously.
 
 ## Stack
 
@@ -29,12 +28,30 @@ Joins the existing `arr` bridge network so Radarr and Sonarr can reach it at
 # Create config directory
 sudo mkdir -p /opt/appdata/qbittorrent
 
+# Create and fix permissions on downloads directory 
+sudo mkdir -p /mnt/media/torrents
+sudo chown -R 1000:1000 /mnt/media/torrents
+
 # Start
 docker compose up -d
 
 # Logs
 docker compose logs -f qbittorrent
 ```
+
+## Port forwarding
+
+Port 6881 (TCP/UDP) must be forwarded on your router to the host machine for
+peers to be able to initiate connections. Without this, torrents will stall
+even when trackers are reachable.
+
+In your router's port forwarding / virtual server settings, add a rule:
+- Protocol: TCP and UDP
+- External port: 6881
+- Internal IP: the LAN IP of the host machine
+- Internal port: 6881
+
+You can verify the port is reachable from outside at https://canyouseeme.org.
 
 ## Post-startup configuration
 
