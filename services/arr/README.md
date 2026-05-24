@@ -11,6 +11,7 @@ Accessible over Tailscale only — not exposed to the public internet.
 | Radarr | `lscr.io/linuxserver/radarr:latest` | Movie library management |
 | Sonarr | `lscr.io/linuxserver/sonarr:latest` | TV library management |
 | Prowlarr | `lscr.io/linuxserver/prowlarr:latest` | Indexer management |
+| Bazarr | `lscr.io/linuxserver/bazarr:latest` | Subtitle management |
 | Jellyseerr | `fallenbagel/jellyseerr:latest` | Request management |
 
 ## Paths
@@ -20,12 +21,16 @@ Accessible over Tailscale only — not exposed to the public internet.
 | Radarr config | `/opt/appdata/radarr` | `/config` |
 | Sonarr config | `/opt/appdata/sonarr` | `/config` |
 | Prowlarr config | `/opt/appdata/prowlarr` | `/config` |
+| Bazarr config | `/opt/appdata/bazarr` | `/config` |
 | Jellyseerr config | `/opt/appdata/jellyseerr` | `/app/config` |
 | Media | `/mnt/media` | `/media` |
 
 All arr services share a unified `/mnt/media` mount to enable hardlinks when
 Radarr/Sonarr move completed downloads from `/media/torrents` into
 `/media/movies` and `/media/tv`.
+
+Bazarr scans the same media library to automatically download and manage
+subtitles for movies and TV shows.
 
 ## Networking
 
@@ -37,12 +42,13 @@ via the Tailscale hostname since Jellyfin runs on host network mode.
 - Jellyseerr → Radarr / Sonarr   (send requests)
 - Radarr / Sonarr → Prowlarr     (indexer lookups)
 - Radarr / Sonarr → qBittorrent  (send downloads)  ← configured after qbittorrent setup
+- Bazarr → Radarr / Sonarr       (library sync + subtitle management)
 
 ## First run
 
 ```bash
 # Create config directories
-sudo mkdir -p /opt/appdata/{radarr,sonarr,prowlarr,jellyseerr}
+sudo mkdir -p /opt/appdata/{radarr,sonarr,prowlarr,bazarr,jellyseerr}
 
 # Fix ownership so containers can write to media directories
 sudo chown -R 1000:1000 /mnt/media
@@ -57,7 +63,7 @@ docker compose logs -f
 ## Post-startup configuration
 
 Follow this order — Prowlarr must be configured before Radarr/Sonarr, and
-both must be configured before Jellyseerr.
+both must be configured before Jellyseerr and Bazarr.
 
 ### 1. Prowlarr — add indexers
 
@@ -119,3 +125,24 @@ Jellyseerr setup runs as a wizard on first launch.
 - Port: `8989`
 - API key: from Sonarr → Settings → General
 - Root folder: `/media/tv`
+
+### 5. Bazarr — connect to Radarr and Sonarr
+
+Bazarr manages subtitle downloads and synchronization for existing media.
+
+1. Open Bazarr
+2. Settings → Radarr
+   - Host: `radarr`
+   - Port: `7878`
+   - API key: from Radarr → Settings → General
+   - Base URL: leave empty
+   - Test and Save
+3. Settings → Sonarr
+   - Host: `sonarr`
+   - Port: `8989`
+   - API key: from Sonarr → Settings → General
+   - Base URL: leave empty
+   - Test and Save
+4. Configure subtitle providers under Settings → Providers
+5. Configure desired languages under Settings → Languages
+6. Trigger a full library scan if existing media is already present
