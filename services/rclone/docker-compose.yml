@@ -1,0 +1,7 @@
+services:
+  rclone:
+    image: rclone/rclone:latest
+    volumes:
+      - /opt/rclone/rclone.conf:/config/rclone/rclone.conf:ro
+      - /opt/backups:/data:ro
+    restart: "no"
