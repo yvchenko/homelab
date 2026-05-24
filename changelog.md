@@ -4,6 +4,7 @@
 - Evaluated `serjs/go-socks5-proxy` for qBittorrent traffic routing; identified compatibility limitations with current setup
 - Planned migration to Dante SOCKS proxy for improved reliability
 - Temporarily configured nat-server to route all outbound traffic through kostyan-server to keep torrent traffic off the Spanish IP
+- Added and configured Bazarr
 
 ## 2025-05-23
 - Migrated LibreChat deployment to nat-server
