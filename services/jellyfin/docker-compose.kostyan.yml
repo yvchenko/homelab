@@ -6,3 +6,4 @@ services:
       - /dev/dri:/dev/dri
     group_add:
       - "109"
+      - "44"
