@@ -1,0 +1,9 @@
+services:
+  jellyfin:
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://nat-server.salmon-halfmoon.ts.net:8096
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    runtime: nvidia
+    devices:
+      - /dev/dri:/dev/dri

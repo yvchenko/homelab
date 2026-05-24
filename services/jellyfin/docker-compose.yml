@@ -9,5 +9,3 @@ services:
       - /opt/appdata/jellyfin/cache:/cache
       - /mnt/media/movies:/media/movies:ro
       - /mnt/media/tv:/media/tv:ro
-    environment:
-      - JELLYFIN_PublishedServerUrl=http://kostyan-server.salmon-halfmoon.ts.net:8096
