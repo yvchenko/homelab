@@ -6,6 +6,7 @@
 - Temporarily configured nat-server to route all outbound traffic through kostyan-server to keep torrent traffic off the Spanish IP
 - Added and configured Bazarr
 - Set up GDrive backup via rclone
+- Add hardware transcoding for nat-server (NVENC via the GTX 1060 3GB)
 
 ## 2025-05-23
 - Migrated LibreChat deployment to nat-server
