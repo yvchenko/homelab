@@ -75,6 +75,18 @@ services:
     networks:
       - arr
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=Europe/Madrid
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
 networks:
   arr:
     driver: bridge
