@@ -7,6 +7,12 @@ interface:
   bookmarks: true
 
 endpoints:
+  ollama:
+    baseURL: "http://host.docker.internal:11434/v1/"
+    models:
+      default: ["dolphin-mistral-24b-venice-edition:Q3_K_M"]
+      fetch: true
+
   custom:
     - name: "Routeway"
       apiKey: "${ROUTEWAY_API_KEY}"
@@ -20,7 +26,7 @@ endpoints:
           "mistral-nemo-instruct:free",
           "devstral-2512:free"
           ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
 
@@ -30,9 +36,8 @@ endpoints:
       models:
         default: [
           "meta-llama/llama-3.3-70b-instruct:free",
-          "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: 'current_model'
       dropParams: ['stop']
@@ -54,20 +59,9 @@ endpoints:
       baseURL: "https://api.deepseek.com/v1"
       models:
         default: [
-          "deepseek-chat",
-          "deepseek-reasoner"
+          "deepseek-v4-flash",
         ]
         fetch: true
       titleConvo: true
       titleModel: "current_model"
 
-    - name: "Qwen"
-      apiKey: "${DASHSCOPE_API_KEY}"
-      baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-      models:
-        default: [
-          "qwen3.6-plus"
-        ]
-        fetch: true
-      titleConvo: true
-      titleModel: "current_model"
