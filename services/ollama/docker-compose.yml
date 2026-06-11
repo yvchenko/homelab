@@ -1,8 +1,9 @@
-ollama:
-  image: ollama/ollama
-  container_name: ollama
-  volumes:
-    - /opt/appdata/ollama:/root/.ollama  # keeps it on the SSD
-  ports:
-    - "11434:11434"
-  restart: unless-stopped
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - /opt/appdata/ollama:/root/.ollama
+    restart: unless-stopped
