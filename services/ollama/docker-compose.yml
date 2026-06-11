@@ -4,6 +4,8 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"
+    environment:
+	  - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
     volumes:
       - /opt/appdata/ollama:/root/.ollama
     restart: unless-stopped
