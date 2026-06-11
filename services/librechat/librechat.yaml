@@ -59,3 +59,10 @@ endpoints:
       titleConvo: true
       titleModel: "current_model"
 
+    - name: "ollama"
+      baseURL: "http://host.docker.internal:11434/v1/"
+      models:
+        default: ["dolphin-mistral-24b-venice-edition:Q3_K_M"]
+        fetch: true
+
+
