@@ -59,7 +59,7 @@ endpoints:
       titleConvo: true
       titleModel: "current_model"
 
-    - name: "DeepSeek"
+    - name: "DeepSeek Chat"
       apiKey: "user_provided"
       baseURL: "https://api.deepseek.com/v1"
       models:
@@ -67,7 +67,7 @@ endpoints:
           "deepseek-v4-flash",
           "deepseek-v4-pro"
         ]
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: "current_model"
 
