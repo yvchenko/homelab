@@ -7,5 +7,9 @@ services:
     container_name: dante-proxy
     network_mode: host
     restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     volumes:
       - ./danted.conf:/etc/danted.conf:ro
