@@ -65,6 +65,7 @@ endpoints:
       models:
         default: [
           "deepseek-v4-flash",
+          "deepseek-v4-pro"
         ]
         fetch: true
       titleConvo: true
@@ -74,9 +75,10 @@ endpoints:
       apiKey: "user_provided"
       baseURL: "https://api.venice.ai/api/v1"
       models:
-        default:
-          - "venice-uncensored-1-2"
-          - "venice-uncensored-role-play"
+        default: [
+          "venice-uncensored-1-2",
+          "venice-uncensored-role-play"
+        ]
         fetch: false
 
 
