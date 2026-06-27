@@ -4,7 +4,6 @@ services:
       context: .
       args:
         DANTE_VERSION: ${DANTE_VERSION}
-    image: <yourdockerhubuser>/dante-proxy:${DANTE_VERSION}
     container_name: dante-proxy
     network_mode: host
     restart: unless-stopped
