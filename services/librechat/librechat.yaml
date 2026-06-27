@@ -20,7 +20,7 @@ endpoints:
           "mistral-nemo-instruct:free",
           "devstral-2512:free"
           ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
 
@@ -33,7 +33,7 @@ endpoints:
           "nvidia/nemotron-3-ultra-550b-a55b:free",
           "nvidia/nemotron-3-super-120b-a12b:free",
           "poolside/laguna-m.1:free",
-          "poolside/laguna-xs.2:free"
+          "poolside/laguna-xs.2:free",
           "openai/gpt-oss-120b:free",
           "cohere/north-mini-code:free",
           "openai/gpt-oss-20b:free",
@@ -42,7 +42,7 @@ endpoints:
           "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
           "nousresearch/hermes-3-llama-3.1-405b:free"
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: 'current_model'
       dropParams: ['stop']
@@ -55,7 +55,7 @@ endpoints:
         default: [
           "kimi-k2.5"
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
 
@@ -66,7 +66,7 @@ endpoints:
         default: [
           "deepseek-v4-flash",
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
 
