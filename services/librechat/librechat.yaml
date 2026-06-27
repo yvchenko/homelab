@@ -13,12 +13,7 @@ endpoints:
       baseURL: "https://api.routeway.ai/v1"
       models:
         default: [
-          "kimi-k2-0905:free",
-          "glm-4.5-air:free",
-          "gpt-oss-120b:free",
-          "step-3.5-flash:free",
-          "mistral-nemo-instruct:free",
-          "devstral-2512:free"
+          "step-3.5-flash:free"
           ]
         fetch: true
       titleConvo: true
@@ -29,18 +24,7 @@ endpoints:
       baseURL: 'https://openrouter.ai/api/v1'
       models:
         default: [
-          "meta-llama/llama-3.3-70b-instruct:free",
-          "nvidia/nemotron-3-ultra-550b-a55b:free",
-          "nvidia/nemotron-3-super-120b-a12b:free",
-          "poolside/laguna-m.1:free",
-          "poolside/laguna-xs.2:free",
-          "openai/gpt-oss-120b:free",
-          "cohere/north-mini-code:free",
-          "openai/gpt-oss-20b:free",
-          "liquid/lfm-2.5-1.2b-thinking:free",
-          "liquid/lfm-2.5-1.2b-instruct:free",
-          "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-          "nousresearch/hermes-3-llama-3.1-405b:free"
+          "openrouter/free"
         ]
         fetch: true
       titleConvo: true
@@ -59,7 +43,7 @@ endpoints:
       titleConvo: true
       titleModel: "current_model"
 
-    - name: "DeepSeek Chat"
+    - name: "DeepSeek"
       apiKey: "user_provided"
       baseURL: "https://api.deepseek.com/v1"
       models:
@@ -67,7 +51,7 @@ endpoints:
           "deepseek-v4-flash",
           "deepseek-v4-pro"
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
 
@@ -79,6 +63,6 @@ endpoints:
           "venice-uncensored-1-2",
           "venice-uncensored-role-play"
         ]
-        fetch: false
+        fetch: true
 
 
