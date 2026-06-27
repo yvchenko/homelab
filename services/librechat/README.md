@@ -70,6 +70,23 @@ for the full schema.
 **`.env`** — secrets and environment variables. Never commit this file. See
 `.env.example` for required keys.
 
+### User-provided API keys
+
+Custom endpoints can be set to `apiKey: "user_provided"` so each user supplies
+their own key via the UI instead of using a shared key from `.env`.
+
+**`CREDS_KEY` and `CREDS_IV` must be set in `.env`** — these encrypt
+  user-provided keys before they're stored in MongoDB. Without real values,
+  keys appear to save successfully in the UI but fail silently on lookup
+  (`no_user_key` errors). Generate with:
+```bash
+  openssl rand -hex 32   # CREDS_KEY
+  openssl rand -hex 16   # CREDS_IV
+```
+  Changing these after keys already exist invalidates all stored
+  keys/sessions — only regenerate once, not casually.
+
+
 ## Backup
 
 MongoDB at `/opt/appdata/librechat/db` is the critical backup target —

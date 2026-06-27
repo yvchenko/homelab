@@ -2,6 +2,8 @@
 
 ## 2025-06-27
 - Switched LibreChat API keys from `.env`-based config to `user_provided`, enabling per-user API keys/credits for scalability ahead of opening access to more users
+- Replaced `serjs/go-socks5-proxy` with a custom-built Dante SOCKS5 proxy on kostyan-server to add proper UDP support for qBittorrent peer traffic from nat-server. 
+- DHT ended up disabled since libtorrent has no SOCKS5 UDP-ASSOCIATE path for it — trackers + PeX handle peer discovery instead.
 
 ## 2025-06-12
 - Attempted to run Dolphin Mistral Venice via Ollama on local hardware; hit hardware limitations
