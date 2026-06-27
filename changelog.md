@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2025-06-27
+- Switched LibreChat API keys from `.env`-based config to `user_provided`, enabling per-user API keys/credits for scalability ahead of opening access to more users
+
+## 2025-06-12
+- Attempted to run Dolphin Mistral Venice via Ollama on local hardware; hit hardware limitations
+- Pivoted to Venice API platform instead
+
+## 2025-06-11
+- Added and configured FlareSolverr
+
 ## 2025-05-24
 - Evaluated `serjs/go-socks5-proxy` for qBittorrent traffic routing; identified compatibility limitations with current setup
 - Planned migration to Dante SOCKS proxy for improved reliability
