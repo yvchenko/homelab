@@ -13,6 +13,7 @@ A homelab setup for various shenanigans.
 | Jellyseerr  | http://kostyan-server.salmon-halfmoon.ts.net:5055 |
 | QBittorrent | http://kostyan-server.salmon-halfmoon.ts.net:8080 |
 | Kavita      | http://kostyan-server.salmon-halfmoon.ts.net:5000 |
+| ESPHome     | http://kostyan-server.salmon-halfmoon.ts.net:6052 |
 
 
 ## node 2: nat-server

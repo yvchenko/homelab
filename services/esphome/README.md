@@ -3,18 +3,6 @@
 ESPHome dashboard (Device Builder) for creating and managing custom
 firmware for ESP8266/ESP32 boards. Runs on `kostyan-server`.
 
-## Access
-
-| What | URL |
-|---|---|
-| Dashboard | `http://<kostyan-server-lan-ip>:6052` or `http://gwserver.salmon-halfmoon.ts.net:6052` |
-
-## Stack
-
-| Container | Image | Notes |
-|---|---|---|
-| `esphome` | `ghcr.io/esphome/esphome` | `network_mode: host` required for online/offline status pings in the dashboard |
-
 ## Paths
 
 | Path | Purpose |
