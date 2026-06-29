@@ -1,0 +1,16 @@
+services:
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+    restart: always
+    privileged: true
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - /opt/appdata/esphome:/config
+      - /etc/localtime:/etc/localtime:ro
+    # First-flash only: uncomment and adjust if flashing a device over USB.
+    # Not needed for OTA updates after the initial flash.
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
