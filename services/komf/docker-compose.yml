@@ -1,0 +1,17 @@
+services:
+  komf:
+    image: sndxr/komf:latest
+    container_name: komf
+    restart: unless-stopped
+    user: "1000:1000"
+    ports:
+      - "8085:8085"
+    volumes:
+      - /opt/appdata/komf:/config
+    networks:
+      - manga
+
+networks:
+  manga:
+    external: true
+    name: manga

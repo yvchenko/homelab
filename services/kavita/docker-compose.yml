@@ -11,3 +11,10 @@ services:
       - /mnt/media/manga:/media/manga:ro
     ports:
       - 5000:5000
+    networks:
+      - manga
+
+networks:
+  manga:
+    name: manga
+    driver: bridge

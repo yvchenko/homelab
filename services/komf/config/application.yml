@@ -1,0 +1,7 @@
+kavita:
+  baseUri: "http://kavita:5000"
+  apiKey: "YOUR_KAVITA_API_KEY"
+  eventListener:
+    enabled: true
+database:
+  file: /config/database.sqlite
