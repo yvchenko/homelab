@@ -10,7 +10,7 @@ services:
     ports:
       - "4567:4567"
     volumes:
-      - /opt/appdata/suwayomi/downloads:/home/suwayomi/.local/share/Tachidesk/downloads
+      - /mnt/media/manga:/home/suwayomi/.local/share/Tachidesk/downloads
       - /opt/appdata/suwayomi:/home/suwayomi/.local/share/Tachidesk
     networks:
       - arr
