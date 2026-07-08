@@ -3,5 +3,15 @@ kavita:
   apiKey: "YOUR_KAVITA_API_KEY"
   eventListener:
     enabled: true
+
+metadataProviders:
+  mangaUpdates:
+    priority: 1
+  mangadex:
+    priority: 2
+  anilist:
+    enabled: true
+    priority: 3
+
 database:
   file: /config/database.sqlite
