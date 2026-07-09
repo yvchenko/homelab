@@ -11,6 +11,7 @@ services:
       - /mnt/media/manga:/media/manga
       - /mnt/media/danmei:/media/danmei
       - /mnt/media/ranobe:/media/ranobe
+      - /mnt/media/comics:/media/comics
     ports:
       - 5000:5000
     networks:
