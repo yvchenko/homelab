@@ -5,13 +5,16 @@ kavita:
     enabled: true
 
 metadataProviders:
-  mangaUpdates:
-    priority: 1
-  mangadex:
-    priority: 2
-  anilist:
-    enabled: true
-    priority: 3
+  defaultProviders:
+    mangaUpdates:
+      priority: 10
+      enabled: true
+    aniList:
+      priority: 20
+      enabled: true
+    mangaDex:
+      priority: 30
+      enabled: true
 
 database:
   file: /config/database.sqlite
