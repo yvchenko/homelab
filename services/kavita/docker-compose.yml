@@ -6,9 +6,10 @@ services:
     environment:
       - TZ=Europe/Kiev
     volumes:
-      - /opt/appdata/kavita:/kavita/config
       - /mnt/media/books:/media/books
-      - /mnt/media/manga:/media/manga:ro
+      - /mnt/media/manga:/media/manga
+      - /mnt/media/danmei:/media/danmei
+      - /mnt/media/ranobe:/media/ranobe
     ports:
       - 5000:5000
     networks:
