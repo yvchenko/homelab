@@ -3,8 +3,8 @@ A homelab setup for various shenanigans.
 
 ## node 1: kostyan-server
 
-| Service     | URL                                               |
-|-------------|---------------------------------------------------|
+| Service     | URL                                              |
+|-------------|--------------------------------------------------|
 | Jellyfin    | http://kostyan-server.salmon-halfmoon.ts.net:8096 |
 | Radarr      | http://kostyan-server.salmon-halfmoon.ts.net:7878 |
 | Sonarr      | http://kostyan-server.salmon-halfmoon.ts.net:8989 |
@@ -14,6 +14,7 @@ A homelab setup for various shenanigans.
 | QBittorrent | http://kostyan-server.salmon-halfmoon.ts.net:8080 |
 | Kavita      | http://kostyan-server.salmon-halfmoon.ts.net:5000 |
 | ESPHome     | http://kostyan-server.salmon-halfmoon.ts.net:6052 |
+| Suwayomi    | http://kostyan-server.salmon-halfmoon.ts.net:4567 |
 
 
 ## node 2: nat-server
