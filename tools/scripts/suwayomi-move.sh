@@ -6,7 +6,7 @@
 # per-series structure that Komga can scan as a library.
 #
 # Suwayomi stores downloads as:
-#   /mnt/media/suwayomi/<source-site>/<series-name>/<chapter files>
+#   /mnt/media/suwayomi/mangas/<source-site>/<series-name>/<chapter files>
 #
 # This script merges all source-site variants of a series into:
 #   /mnt/media/manga/<series-name>/<chapter files>
@@ -31,7 +31,7 @@
 #     inconsistent naming from different scrapers will produce separate
 #     Komga series entries.
 
-SRC="/mnt/media/suwayomi"
+SRC="/mnt/media/suwayomi/mangas"
 DEST="/mnt/media/manga"
 LOG="/var/log/suwayomi-move.log"
 
