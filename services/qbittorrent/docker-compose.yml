@@ -10,5 +10,5 @@ services:
       - TZ=Europe/Kiev
       - WEBUI_PORT=8080
     volumes:
+      - /mnt/media:/media
       - /opt/appdata/qbittorrent:/config
-      - /mnt/media/torrents:/media/torrents
