@@ -6,6 +6,7 @@ services:
     environment:
       - TZ=Europe/Kiev
     volumes:
+      - /opt/appdata/kavita:/kavita/config
       - /mnt/media/books:/media/books
       - /mnt/media/manga:/media/manga
       - /mnt/media/danmei:/media/danmei
