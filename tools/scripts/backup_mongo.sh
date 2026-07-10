@@ -3,7 +3,7 @@ set -euo pipefail
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR=/opt/backups
-COMPOSE_FILE=/home/nat/homelab/services/rclone/docker-compose.yml
+COMPOSE_FILE=/home/nat/homelab/services/sandbox/docker-compose.yml
 REMOTE="nat:homelab-backups/nat-server"
 LOG=/var/log/mongo_backup.log
 KEEP_DAYS=5
