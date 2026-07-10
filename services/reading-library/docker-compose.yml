@@ -1,0 +1,37 @@
+services:
+  kavita:
+    image: jvmilazz0/kavita:0.9.0
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Kiev
+    volumes:
+      - /opt/appdata/kavita:/kavita/config
+      - /mnt/media/books:/media/books
+      - /mnt/media/manga:/media/manga
+      - /mnt/media/danmei:/media/danmei
+      - /mnt/media/ranobe:/media/ranobe
+      - /mnt/media/comics:/media/comics
+    ports:
+      - 5000:5000
+
+  suwayomi:
+    image: ghcr.io/suwayomi/suwayomi-server:stable
+    container_name: suwayomi
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Kiev
+      - FLARESOLVERR_ENABLED=true
+      - FLARESOLVERR_URL=http://flaresolverr:8191
+    ports:
+      - "4567:4567"
+    volumes:
+      - /mnt/media/suwayomi:/home/suwayomi/.local/share/Tachidesk/downloads
+      - /opt/appdata/suwayomi:/home/suwayomi/.local/share/Tachidesk
+    networks:
+      - media_download
+
+networks:
+  media_download:
+    external: true
+    name: media_download
