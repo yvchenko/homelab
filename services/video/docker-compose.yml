@@ -1,11 +1,11 @@
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
-    container_name: jellyfin
+    container_name: video
     restart: unless-stopped
     network_mode: host
     volumes:
-      - /opt/appdata/jellyfin/config:/config
-      - /opt/appdata/jellyfin/cache:/cache
+      - /opt/appdata/video/config:/config
+      - /opt/appdata/video/cache:/cache
       - /mnt/media/movies:/media/movies:ro
       - /mnt/media/tv:/media/tv:ro

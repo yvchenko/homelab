@@ -65,12 +65,12 @@ acceleration to NVENC, enable all codecs → Save.
 
 ```bash
 # Create directories
-sudo mkdir -p /opt/appdata/jellyfin/{config,cache}
+sudo mkdir -p /opt/appdata/video/{config,cache}
 sudo mkdir -p /mnt/media/{movies,tv}
 
 # Start (example for nat-server)
 docker compose -f docker-compose.yml -f docker-compose.nat.yml up -d
 
 # Logs
-docker compose logs -f jellyfin
+docker compose logs -f video
 ```
