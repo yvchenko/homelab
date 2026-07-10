@@ -13,8 +13,8 @@ firmware for ESP8266/ESP32 boards. Runs on `kostyan-server`.
 ## First-run commands
 
 ```bash
-mkdir -p /opt/appdata/esphome
-chown -R 1000:1000 /opt/appdata/esphome   # match homelab uid convention; ESPHome's official image generally runs fine as root too, adjust if permission errors appear
+mkdir -p /opt/appdata/smart-home
+chown -R 1000:1000 /opt/appdata/smart-home   # match homelab uid convention; ESPHome's official image generally runs fine as root too, adjust if permission errors appear
 
 cp .env.example .env
 # edit .env with real dashboard credentials
