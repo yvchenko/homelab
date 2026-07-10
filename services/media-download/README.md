@@ -7,7 +7,7 @@ downloading to its own local media library. Accessible over Tailscale only.
 
 Prowlarr's UI quirks and setup notes live separately in `PROWLARR.md` at this
 folder's root, since it's the shared search/indexing layer for the whole
-media pipeline (video, and manga acquisition via nyaa.si), not arr-specific.
+media pipeline (video, and manga acquisition).
 
 ## Stack
 
@@ -37,9 +37,7 @@ All arr services and qBittorrent share one `/mnt/media:/media` mount — there
 is no separate `/mnt/media/torrents` mount. Torrents land in
 `/mnt/media/torrents/` as a plain subdirectory of the shared mount, which is
 what enables Radarr/Sonarr to hardlink completed downloads into
-`/media/movies` / `/media/tv` instead of copying. (Earlier docs described a
-dedicated torrents-only mount for qBittorrent — that was never actually the
-case; this is the corrected version.)
+`/media/movies` / `/media/tv` instead of copying. 
 
 ## Networking
 
@@ -55,15 +53,11 @@ This means:
 - **Radarr/Sonarr do not reach qBittorrent by container name.** The real,
   working config uses qBittorrent's **Tailscale hostname**
   (`<node>.salmon-halfmoon.ts.net`) and port `8080`, same as any other
-  Tailscale-reachable service. `http://qbittorrent:8080` will not resolve —
-  ignore any docs or instructions that say otherwise.
+  Tailscale-reachable service. `http://qbittorrent:8080` will not resolve.
 - Since qBittorrent and Radarr/Sonarr mount the identical host path
   (`/mnt/media`), remote path mappings between them are likely unnecessary
   in practice — container-internal `/media/torrents` already matches on both
-  sides. If you have a remote path mapping configured anyway, verify it's
-  actually a no-op (`Remote Path` = `Local Path`) rather than assuming it's
-  required; the previous docs described one but that was written against
-  the never-implemented bridge-network design.
+  sides. 
 
 ## Service relationships
 
@@ -84,7 +78,6 @@ sudo chown -R 1000:1000 /mnt/media
 
 # Dante needs its version pin — see dante/.env.example
 cp dante/.env.example .env
-# edit DANTE_VERSION
 
 # Start everything
 docker compose up -d --build
@@ -217,9 +210,6 @@ Server:
   DHT off rather than routing it. DHT is disabled on nat-server by design;
   peer discovery relies on trackers + PeX. kostyan-server's qBittorrent
   keeps DHT on since it doesn't proxy.
-- **Dante `ulimits.nofile: 65536`** — the container default fd limit caused
-  intermittent `sending client to io-child... Resource temporarily
-  unavailable` errors under load.
 - **`danted.conf` is bind-mounted, not baked into the image** — config
   tweaks don't require a rebuild, just a restart.
 - **`DANTE_VERSION` build arg requires `.env`** at `media-download/` root
