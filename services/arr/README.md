@@ -12,7 +12,7 @@ Accessible over Tailscale only — not exposed to the public internet.
 | Sonarr | `lscr.io/linuxserver/sonarr:latest` | TV library management |
 | Prowlarr | `lscr.io/linuxserver/prowlarr:latest` | Indexer management |
 | Bazarr | `lscr.io/linuxserver/bazarr:latest` | Subtitle management |
-| Jellyseerr | `fallenbagel/jellyseerr:latest` | Request management |
+| FlareSolverr | `ghcr.io/flaresolverr/flaresolverr:latest` | Proxy for bypassing Cloudflare/anti-bot challenges — used by Prowlarr (indexers) and Suwayomi (manga sources) |
 
 ## Paths
 
@@ -22,7 +22,6 @@ Accessible over Tailscale only — not exposed to the public internet.
 | Sonarr config | `/opt/appdata/sonarr` | `/config` |
 | Prowlarr config | `/opt/appdata/prowlarr` | `/config` |
 | Bazarr config | `/opt/appdata/bazarr` | `/config` |
-| Jellyseerr config | `/opt/appdata/jellyseerr` | `/app/config` |
 | Media | `/mnt/media` | `/media` |
 
 All arr services share a unified `/mnt/media` mount to enable hardlinks when
@@ -34,12 +33,15 @@ subtitles for movies and TV shows.
 
 ## Networking
 
-Services communicate over the `arr` bridge network. Jellyseerr reaches Jellyfin
-via the Tailscale hostname since Jellyfin runs on host network mode.
+Services communicate over the `arr` bridge network. АlareSolverr is reachable by 
+container name (`http://flaresolverr:8191`) from anything else on the `arr` network 
+— used by Prowlarr for indexers that require Cloudflare/anti-bot bypass, and by 
+Suwayomi (separate stack, joins this network externally) for manga sources with 
+the same protection. Note: Docker Compose project-name prefixing means the actual network 
+name is `arr_arr`, not `arr` — external stacks referencing it need `name: arr_arr`.
 
 ## Service relationships
 
-- Jellyseerr → Radarr / Sonarr   (send requests)
 - Radarr / Sonarr → Prowlarr     (indexer lookups)
 - Radarr / Sonarr → qBittorrent  (send downloads)  ← configured after qbittorrent setup
 - Bazarr → Radarr / Sonarr       (library sync + subtitle management)
@@ -48,7 +50,7 @@ via the Tailscale hostname since Jellyfin runs on host network mode.
 
 ```bash
 # Create config directories
-sudo mkdir -p /opt/appdata/{radarr,sonarr,prowlarr,bazarr,jellyseerr}
+sudo mkdir -p /opt/appdata/{radarr,sonarr,prowlarr,bazarr}
 
 # Fix ownership so containers can write to media directories
 sudo chown -R 1000:1000 /mnt/media
@@ -63,7 +65,7 @@ docker compose logs -f
 ## Post-startup configuration
 
 Follow this order — Prowlarr must be configured before Radarr/Sonarr, and
-both must be configured before Jellyseerr and Bazarr.
+both must be configured before Bazarr and Flaresolverr.
 
 ### 1. Prowlarr — add indexers
 
@@ -77,6 +79,10 @@ do not search indexers directly — they go through Prowlarr.
 4. Click Test — if it passes, Save
 5. Repeat for additional indexers
 6. Add Radarr and Sonarr via Prowlarr → Apps → Add App
+7. For indexers that fail with a Cloudflare/anti-bot error, go to
+   Settings → Indexers → FlareSolverr, add a proxy with host
+   `http://flaresolverr:8191`, then edit the failing indexer and select it
+   under Tags/FlareSolverr
 
 ### 2. Radarr — connect to Prowlarr and set root folder
 
@@ -100,33 +106,7 @@ Same as Radarr:
 2. Settings → Media Management → Root Folders → Add Root Folder
    - Path: `/media/tv`
 
-### 4. Jellyseerr — connect to Jellyfin, Radarr, and Sonarr
-
-Jellyseerr setup runs as a wizard on first launch.
-
-**Step 1 — Connect to Jellyfin:**
-- Jellyfin URL: `http://kostyan-server.salmon-halfmoon.ts.net:8096`
-- Enter your Jellyfin admin credentials
-- Leave URL Base empty (only needed behind a reverse proxy)
-- Sign in and proceed
-
-**Step 2 — Connect to Radarr:**
-- Server name: anything descriptive
-- Host: `radarr`
-- Port: `7878`
-- API key: found in Radarr → Settings → General
-- Test and proceed
-- Root folder will populate from Radarr — select `/media/movies`
-- Set quality profile to match what you configured in Radarr
-
-**Step 3 — Connect to Sonarr:**
-- Same as Radarr but:
-- Host: `sonarr`
-- Port: `8989`
-- API key: from Sonarr → Settings → General
-- Root folder: `/media/tv`
-
-### 5. Bazarr — connect to Radarr and Sonarr
+### 4. Bazarr — connect to Radarr and Sonarr
 
 Bazarr manages subtitle downloads and synchronization for existing media.
 

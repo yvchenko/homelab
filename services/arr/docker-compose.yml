@@ -62,19 +62,6 @@ services:
     networks:
       - arr
 
-  jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Kiev
-    volumes:
-      - /opt/appdata/jellyseerr:/app/config
-    ports:
-      - 5055:5055
-    networks:
-      - arr
-
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
