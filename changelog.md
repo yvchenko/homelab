@@ -1,5 +1,22 @@
 # Project Changelog
 
+## 2025-07-11
+- Restructured services into domain-clustered groups (media-download, video, reading-library, sandbox, smart-home)
+- Rewrote and updated project documentation to reflect new repo structure
+
+## 2025-07-10
+- Removed Jellyseerr from the stack
+- Established acquisition workflow for manga, comics, and light novels via Prowlarr
+
+## 2025-07-09
+- Brought Suwayomi to fully operational status
+- Removed Komf after identifying reliability issues with Kavita integration
+- Added `suwayomi-move.sh` to automate flattening of Suwayomi output into Kavita-compatible library structure
+- Resolved qBittorrent and Kavita volume mount issues
+
+## 2025-07-08
+- Deployed and configured Suwayomi and Komf
+
 ## 2025-06-27
 - Switched LibreChat API keys from `.env`-based config to `user_provided`, enabling per-user API keys/credits for scalability ahead of opening access to more users
 - Replaced `serjs/go-socks5-proxy` with a custom-built Dante SOCKS5 proxy on kostyan-server to add proper UDP support for qBittorrent peer traffic from nat-server. 
