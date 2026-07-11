@@ -1,7 +1,13 @@
-# ESPHome
+# Smart Home
 
-ESPHome dashboard (Device Builder) for creating and managing custom
-firmware for ESP8266/ESP32 boards. Runs on `kostyan-server`.
+ESPHome dashboard (Device Builder) for creating and managing custom firmware
+for ESP8266/ESP32 boards. Runs on `kostyan-server`.
+
+## Stack
+
+| Component | Purpose |
+|---|---|
+| ESPHome | Dashboard for building/flashing/managing ESP8266/ESP32 firmware |
 
 ## Paths
 
@@ -13,8 +19,8 @@ firmware for ESP8266/ESP32 boards. Runs on `kostyan-server`.
 ## First-run commands
 
 ```bash
-mkdir -p /opt/appdata/smart-home
-chown -R 1000:1000 /opt/appdata/smart-home   # match homelab uid convention; ESPHome's official image generally runs fine as root too, adjust if permission errors appear
+mkdir -p /opt/appdata/esphome
+chown -R 1000:1000 /opt/appdata/esphome   # match homelab uid convention; ESPHome's official image generally runs fine as root too, adjust if permission errors appear
 
 cp .env.example .env
 # edit .env with real dashboard credentials
@@ -38,8 +44,8 @@ docker compose up -d
 - New device configs created via the dashboard wizard land under
   `/opt/appdata/esphome/<node_name>.yaml` and are not currently tracked in
   git — decide later whether to commit them to the homelab repo or keep
-  them appdata-only (they may contain WiFi credentials in plaintext
-  unless using `secrets.yaml`).
+  them appdata-only (they may contain WiFi credentials in plaintext unless
+  using `secrets.yaml`).
 
 ## Notes
 
@@ -48,3 +54,8 @@ docker compose up -d
 - If the dashboard's online/offline indicators don't behave correctly,
   check that nothing else on `kostyan-server` is bound to port 6052 in a
   way that conflicts with host networking.
+
+## Known gotchas
+
+- Hardware flashing is currently pending on Kostyan's end — dashboard-only
+  setup so far, no devices flashed yet.

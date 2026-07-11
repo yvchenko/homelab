@@ -1,14 +1,15 @@
-# Jellyfin
+# Video
 
-Self-hosted media server. Runs on Kostya's node (`kostyan-server`) and on Nat's 
-node (`nat-server`) simultaneously. Serves media stored on the HDD mount at 
-`/mnt/media`. Accessible over Tailscale only — not exposed to the public internet.
+Self-hosted media server (Jellyfin). Runs on Kostya's node (`kostyan-server`)
+and on Nat's node (`nat-server`) simultaneously — two independent instances,
+each reading its own local HDD, not a shared library. Accessible over
+Tailscale only — not exposed to the public internet.
 
 ## Stack
 
 | Component | Image |
 |-----------|-------|
-| Media server | `jellyfin/jellyfin:latest` |
+| Jellyfin | `jellyfin/jellyfin:latest` |
 
 ## Paths
 
@@ -19,11 +20,14 @@ node (`nat-server`) simultaneously. Serves media stored on the HDD mount at
 | Movies | `/mnt/media/movies` | `/media/movies` |
 | TV | `/mnt/media/tv` | `/media/tv` |
 
-Media mounts are read-only. Jellyfin has no write access to the media directories.
+Media mounts are read-only. Jellyfin has no write access to the media
+directories.
 
 ## Networking
 
-Uses `network_mode: host` for local network discovery (DLNA broadcast).
+Uses `network_mode: host` for local network discovery (DLNA broadcast). No
+dependency on the `media_download` network — Jellyfin reads from `/mnt/media`
+directly and doesn't talk to arr/qBittorrent over the wire.
 
 ## Node-specific configuration
 
@@ -65,12 +69,18 @@ acceleration to NVENC, enable all codecs → Save.
 
 ```bash
 # Create directories
-sudo mkdir -p /opt/appdata/video/{config,cache}
+sudo mkdir -p /opt/appdata/jellyfin/{config,cache}
 sudo mkdir -p /mnt/media/{movies,tv}
 
 # Start (example for nat-server)
 docker compose -f docker-compose.yml -f docker-compose.nat.yml up -d
 
 # Logs
-docker compose logs -f video
+docker compose logs -f jellyfin
 ```
+
+## Future
+
+Syncthing is planned to sync the two nodes' libraries so either Jellyfin
+instance can serve both catalogues rather than each being limited to its own
+local HDD.
