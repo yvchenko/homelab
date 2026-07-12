@@ -1,0 +1,58 @@
+name: media-sync
+
+# media-sync: cross-node file replication and co-viewing.
+# - syncthing   : replicates watch-together/ and cloud-storage/ between nat-server and kostyan-server
+# - filebrowser : Drive-like web UI over the cloud-storage/ folder
+# - syncplay    : relay server for synced local playback (play/pause/seek only, never media bytes)
+#
+# syncthing needs network_mode: host for its transfer (22000/tcp+udp) and local-discovery
+# (21027/udp) ports — same reasoning as dante/qbittorrent in media-download. syncplay's
+# maintained image (dnomd343/syncplay) also documents --net=host as its expected mode, so it
+# follows the same pattern. filebrowser has no P2P/discovery requirements and sits on the
+# media_sync bridge network instead.
+
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: ${NODE_NAME}-syncthing
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /opt/appdata/syncthing:/var/syncthing/config
+      - /mnt/media/shared:/var/syncthing/shared
+      - /mnt/media/cloud:/var/syncthing/cloud
+    restart: unless-stopped
+
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    user: "${PUID}:${PGID}"
+    networks:
+      - media_sync
+    ports:
+      - "${FILEBROWSER_PORT:-8082}:80"
+    volumes:
+      - /mnt/media/cloud:/srv
+      - /opt/appdata/filebrowser:/database
+      - ./filebrowser/settings.json:/config/settings.json:ro
+    restart: unless-stopped
+
+  syncplay:
+    image: dnomd343/syncplay:latest
+    container_name: syncplay-server
+    network_mode: host
+    environment:
+      - PORT=${SYNCPLAY_PORT:-8999}
+      - PASSWORD=${SYNCPLAY_PASSWORD}
+      - PERSISTENT=ON
+    volumes:
+      - /opt/appdata/syncplay:/data
+    restart: unless-stopped
+
+networks:
+  media_sync:
+    name: media_sync
