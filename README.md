@@ -19,6 +19,13 @@ isn't owned by either.
 | Bazarr       | http://kostyan-server.salmon-halfmoon.ts.net:6767     | http://nat-server.salmon-halfmoon.ts.net:6767     |
 | QBittorrent  | http://kostyan-server.salmon-halfmoon.ts.net:8080     | http://nat-server.salmon-halfmoon.ts.net:8080     |
 
+### media-sync
+
+| Service         | kostyan-server                                          | nat-server                                         |
+| ---------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| Syncthing GUI    | http://kostyan-server.salmon-halfmoon.ts.net:8384       | http://nat-server.salmon-halfmoon.ts.net:8384      |
+| Filebrowser      | http://kostyan-server.salmon-halfmoon.ts.net:8082`      | http://nat-server.salmon-halfmoon.ts.net:8082      |
+
 ### video
 
 | Service  | kostyan-server                                     | nat-server                                     |

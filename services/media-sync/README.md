@@ -19,17 +19,6 @@ Native clients need to be downloaded separately according to device.
 The Syncplay server only needs to run on one node — both clients connect to
 that single instance regardless of which node hosts it.
 
-## Access
-
-| Service         | kostyan-server                                            | nat-server                                            |
-| ---------------- | ----------------------------------------------------------- | -------------------------------------------------------- |
-| Syncthing GUI    | `http://kostyan-server.salmon-halfmoon.ts.net:8384`        | `http://nat-server.salmon-halfmoon.ts.net:8384`        |
-| Filebrowser      | `http://kostyan-server.salmon-halfmoon.ts.net:8082`        | `http://nat-server.salmon-halfmoon.ts.net:8082`        |
-| Syncplay server  | `kostyan-server.salmon-halfmoon.ts.net:8999` (TCP, no UI)  | `nat-server.salmon-halfmoon.ts.net:8999` (TCP, no UI)  |
-
-The Syncplay server only needs to run on one node — both clients connect to
-that single instance regardless of which node hosts it.
-
 ## Stack
 
 | Service     | Image                             | Purpose                                        |
