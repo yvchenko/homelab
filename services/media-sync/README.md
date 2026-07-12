@@ -12,6 +12,9 @@ Cross-node file replication and co-viewing infrastructure between nat-server
   play/pause/seek/position messages, never media bytes. Each side reads its
   own local, Syncthing-replicated copy of the file in VLC, keeping
   cross-country co-watching viable despite the Ukraine–Spain link.
+- **samba** — SMB share over `shared/`, for client devices (laptops, etc.)
+  that need direct network access to a node's local copy without running
+  their own Syncthing instance.
 
 Co-watching happens via VLC + Syncplay reading the synced file directly.
 Native clients need to be downloaded separately according to device.
@@ -26,6 +29,7 @@ that single instance regardless of which node hosts it.
 | syncthing   | `syncthing/syncthing:latest`        | Cross-node folder replication                    |
 | filebrowser | `filebrowser/filebrowser:latest`    | Web upload/browse UI over `cloud/`               |
 | syncplay    | `dnomd343/syncplay:latest`          | Playback-event relay for synced watching         |
+| samba       | `dockurr/samba:latest`              | SMB share over `shared/` for non-synced devices  |
 
 ## Paths
 
@@ -104,3 +108,11 @@ docker compose up -d
   the entire server, not individual rooms — adequate for a two-person
   private server, not a substitute for real access control if this is ever
   exposed beyond Tailscale.
+- **Samba's port 445 can conflict with a host-level `smbd`.** If Ubuntu's
+  own Samba package is already installed and running, the container fails
+  to start with `address already in use`. Stop and disable the host
+  service (`sudo systemctl stop smbd`, `sudo systemctl disable smbd`) if
+  nothing else on that node depends on it.
+- **`SAMBA_HOST_IP` must be set explicitly in `.env`.** It binds port 445
+  to that single address rather than all interfaces — leaving it blank
+  exposes SMB beyond the tailnet.
