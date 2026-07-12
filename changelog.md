@@ -4,7 +4,7 @@
 - Added media-sync cluster (syncthing, filebrowser, syncplay, samba) for cross-node file replication and synchronized co-viewing between nat-server and kostyan-server
 - Introduced shared/ and cloud/ Syncthing folders: shared/ for co-viewing content consumed via Syncplay + VLC/Synkplay, cloud/ for general Drive-like storage via Filebrowser
 - Added a Samba share over shared/ for client devices without their own Syncthing instance
-- 
+
 ## 2025-07-11
 - Restructured services into domain-clustered groups (media-download, video, reading-library, sandbox, smart-home)
 - Rewrote and updated project documentation to reflect new repo structure
