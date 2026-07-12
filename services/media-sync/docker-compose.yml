@@ -1,15 +1,17 @@
 name: media-sync
 
 # media-sync: cross-node file replication and co-viewing.
-# - syncthing   : replicates watch-together/ and cloud-storage/ between nat-server and kostyan-server
-# - filebrowser : Drive-like web UI over the cloud-storage/ folder
+# - syncthing   : replicates shared/ and cloud/ between nat-server and kostyan-server
+# - filebrowser : Drive-like web UI over the cloud/ folder
 # - syncplay    : relay server for synced local playback (play/pause/seek only, never media bytes)
+# - samba       : SMB share over shared/, for non-synced client devices (laptops) that need
+#                 direct network access to a node's local copy without their own Syncthing sync
 #
 # syncthing needs network_mode: host for its transfer (22000/tcp+udp) and local-discovery
 # (21027/udp) ports — same reasoning as dante/qbittorrent in media-download. syncplay's
 # maintained image (dnomd343/syncplay) also documents --net=host as its expected mode, so it
-# follows the same pattern. filebrowser has no P2P/discovery requirements and sits on the
-# media_sync bridge network instead.
+# follows the same pattern. filebrowser and samba have no P2P/discovery requirements and sit on
+# the media_sync bridge network instead.
 
 services:
   syncthing:
@@ -51,6 +53,23 @@ services:
       - PERSISTENT=ON
     volumes:
       - /opt/appdata/syncplay:/data
+    restart: unless-stopped
+
+  samba:
+    image: dockurr/samba:latest
+    container_name: samba
+    environment:
+      - NAME=shared
+      - USER=${SAMBA_USER}
+      - PASS=${SAMBA_PASSWORD}
+      - UID=${PUID}
+      - GID=${PGID}
+    networks:
+      - media_sync
+    ports:
+      - "${SAMBA_HOST_IP}:445:445"
+    volumes:
+      - /mnt/media/shared:/storage
     restart: unless-stopped
 
 networks:
