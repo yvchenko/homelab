@@ -23,7 +23,7 @@ isn't owned by either.
 
 | Service         | kostyan-server                                          | nat-server                                         |
 | ---------------- | -------------------------------------------------------- | ---------------------------------------------------- |
-| Syncthing GUI    | http://kostyan-server.salmon-halfmoon.ts.net:8384       | http://nat-server.salmon-halfmoon.ts.net:8384      |
+| Syncthing        | http://kostyan-server.salmon-halfmoon.ts.net:8384       | http://nat-server.salmon-halfmoon.ts.net:8384      |
 | Filebrowser      | http://kostyan-server.salmon-halfmoon.ts.net:8082      | http://nat-server.salmon-halfmoon.ts.net:8082      |
 
 ### video
