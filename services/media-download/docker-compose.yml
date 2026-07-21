@@ -41,6 +41,7 @@ services:
       - TZ=Europe/Kiev
     volumes:
       - /opt/appdata/prowlarr:/config
+      - ../audiobooks/prowlarr-custom/audiobookbay.yml:/config/Definitions/Custom/audiobookbay.yml:ro
     ports:
       - 9696:9696
     sysctls:
