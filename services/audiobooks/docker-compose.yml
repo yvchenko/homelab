@@ -1,0 +1,19 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    networks:
+      - media_download
+    volumes:
+      - /opt/appdata/audiobookshelf:/config
+      - /opt/appdata/audiobookshelf/metadata:/metadata
+      - /mnt/media/audiobooks:/audiobooks
+    ports:
+      - "13378:80"
+    environment:
+      - TZ=Europe/Madrid
+    restart: unless-stopped
+
+networks:
+  media_download:
+    external: true
