@@ -51,6 +51,12 @@ isn't owned by either.
 |---------|-------------------------------------------------------|
 | ESPHome | http://kostyan-server.salmon-halfmoon.ts.net:6052   |
 
+## audiobooks
+
+| Service        | nat-server                                     |
+|----------------|------------------------------------------------|
+| Audiobookshelf | http://nat-server.salmon-halfmoon.ts.net:13378 |
+
 nat-server's `media-download` has no local Dante instance — its qBittorrent
 proxies peer traffic through kostyan-server's Dante over Tailscale instead.
 See `services/media-download/README.md` for details.
@@ -66,10 +72,11 @@ services/
   reading-library/   # kavita, suwayomi — depends on media-download's network
   sandbox/           # librechat, rclone
   smart-home/        # esphome
+  audiobooks/        # audiobookshelf
 ```
 
-`media-download` is the one cluster with a dependent: `video` and
-`reading-library` both attach to its `media_download` network (Jellyfin
+`media-download` is the one cluster with a dependent: `video`,
+`reading-library` and `audiobooks` attach to its `media_download` network (Jellyfin
 doesn't currently need to, but Suwayomi does — for FlareSolverr). Bring
 `media-download` up before either of those clusters. `sandbox` and
 `smart-home` have no shared dependencies and can start in any order.
