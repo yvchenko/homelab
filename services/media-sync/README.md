@@ -24,23 +24,23 @@ that single instance regardless of which node hosts it.
 
 ## Stack
 
-| Service     | Image                             | Purpose                                        |
-| ----------- | ----------------------------------- | ------------------------------------------------- |
-| syncthing   | `syncthing/syncthing:latest`        | Cross-node folder replication                    |
-| filebrowser | `filebrowser/filebrowser:latest`    | Web upload/browse UI over `cloud/`               |
-| syncplay    | `dnomd343/syncplay:latest`          | Playback-event relay for synced watching         |
-| samba       | `dockurr/samba:latest`              | SMB share over `shared/` for non-synced devices  |
+| Service     | Image                             | Purpose                                         |
+| ----------- | ---------------------------------- | ------------------------------------------------ |
+| syncthing   | `syncthing/syncthing:latest`       | Cross-node folder replication                   |
+| filebrowser | `filebrowser/filebrowser:latest`   | Web upload/browse UI over `cloud/`              |
+| syncplay    | `dnomd343/syncplay:latest`         | Playback-event relay for synced watching        |
+| samba       | `dockurr/samba:latest`             | SMB share over `shared/` for non-synced devices |
 
 ## Paths
 
-| Path                          | Purpose                                       |
-| ------------------------------- | ------------------------------------------------ |
-| `/opt/appdata/syncthing`        | Syncthing config and index database             |
-| `/opt/appdata/filebrowser`      | Filebrowser SQLite database                      |
-| `/opt/appdata/syncplay`         | Syncplay persistent room/stats data              |
-| `/mnt/media/shared`             | Synced folder — co-viewing content               |
-| `/mnt/media/cloud`              | Synced folder — general Drive-like storage       |
-| `./filebrowser/settings.json`   | Filebrowser first-run baseline config (tracked)  |
+| Path                          | Purpose                                         |
+| ------------------------------ | ------------------------------------------------ |
+| `/opt/appdata/syncthing`       | Syncthing config and index database             |
+| `/opt/appdata/filebrowser`     | Filebrowser SQLite database                     |
+| `/opt/appdata/syncplay`        | Syncplay persistent room/stats data             |
+| `/mnt/media/shared`            | Synced folder — co-viewing content              |
+| `/mnt/media/cloud`             | Synced folder — general Drive-like storage      |
+| `./filebrowser/settings.json`  | Filebrowser first-run baseline config (tracked) |
 
 ## First-run commands
 
@@ -85,7 +85,9 @@ docker compose up -d
 6. **Verify Syncplay connectivity from both clients** before a watch
    session: Kostyan's Linux Syncplay client + VLC, and Synkplay on iOS
    (sideloaded via AltStore) — both pointed at whichever node hosts the
-   relay.
+   relay. On iOS, use the VLCKit engine with a locally downloaded copy of
+   the file (via the Samba share), not a direct SMB stream — see gotcha
+   below.
 
 ## Known gotchas
 
@@ -116,3 +118,13 @@ docker compose up -d
 - **`SAMBA_HOST_IP` must be set explicitly in `.env`.** It binds port 445
   to that single address rather than all interfaces — leaving it blank
   exposes SMB beyond the tailnet.
+- **Synkplay's VLCKit engine reports a broken seek position when playing
+  directly off the Samba SMB share on iOS**, which Syncplay then
+  interprets as a real seek and rewinds the whole room to 00:00. Confirmed
+  specific to VLCKit + SMB — the same engine seeks correctly on a local
+  file, and the native desktop Syncplay + VLC client has no issue with the
+  same SMB source. Tracked upstream:
+  [yuroyami/syncplay-mobile#158](https://github.com/yuroyami/syncplay-mobile/issues/158).
+  Workaround: download the episode to the iPad locally (via the Files app,
+  from the Samba share) before a watch session, and open that local copy
+  in Synkplay's VLCKit engine instead of streaming it live.
