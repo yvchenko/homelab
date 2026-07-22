@@ -1,12 +1,15 @@
 # Project Changelog
 
-## 2026-07-21
+## 2026-07-22
 - Started migration to k3s
+- Installed k3s on both nodes, designated nat-server as control-plane and kostyan-server as a worker
+- Added and verified NVIDIA device plugin for encoding (nat-server only)
+- Documented bootstrap scripts for further reuse
 
 ## 2026-07-21
-- Added audiobooks service — Audiobookshelf, single instance on nat-server, attaches to `media_download` (external)
-- Custom Cardigann indexer definition for AudioBookBay (`prowlarr-custom/audiobookbay.yml`), sourced from Jackett's maintained definition, mounted into Prowlarr's `Definitions/Custom/`
-- Dedicated `audiobooks` qBittorrent category for audiobook downloads, separate from general/arr-stack flow
+- Added audiobooks service — Audiobookshelf, single instance on nat-server, attaches to media_download (external)
+- Custom Cardigann indexer definition for AudioBookBay, sourced from Jackett's maintained definition, mounted into Prowlarr
+- Dedicated audiobooks qBittorrent category for audiobook downloads, separate from general/arr-stack flow
 
 ## 2026-07-12
 - Added media-sync cluster (syncthing, filebrowser, syncplay, samba) for cross-node file replication and synchronized co-viewing between nat-server and kostyan-server
