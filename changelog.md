@@ -1,8 +1,9 @@
 # Project Changelog
 
 ## 2026-07-21
+- Started migration to k3s
 
-### Added
+## 2026-07-21
 - Added audiobooks service — Audiobookshelf, single instance on nat-server, attaches to `media_download` (external)
 - Custom Cardigann indexer definition for AudioBookBay (`prowlarr-custom/audiobookbay.yml`), sourced from Jackett's maintained definition, mounted into Prowlarr's `Definitions/Custom/`
 - Dedicated `audiobooks` qBittorrent category for audiobook downloads, separate from general/arr-stack flow
