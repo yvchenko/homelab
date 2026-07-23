@@ -33,7 +33,8 @@ endpoints:
           "z-ai/glm-5.2",
           "nvidia/nemotron-3-ultra-550b-a55b:free",
           "poolside/laguna-s-2.1:free",
-          "cohere/north-mini-code:free"
+          "cohere/north-mini-code:free",
+          "cognitivecomputations/dolphin-mistral-24b-venice-edition"
         ]
         fetch: false
       titleConvo: true
