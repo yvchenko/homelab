@@ -48,9 +48,10 @@ endpoints:
       models:
         default: [
           "kimi-k2.5",
-          "kimi-k2.6"
+          "kimi-k2.6",
+          "moonshotai/kimi-k2.7-code"
         ]
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: "current_model"
 
@@ -74,7 +75,7 @@ endpoints:
           "venice-uncensored-1-2",
           "venice-uncensored-role-play"
         ]
-        fetch: true
+        fetch: false
 
     - name: "NVIDIA (all free)"
       apiKey: "user_provided"
