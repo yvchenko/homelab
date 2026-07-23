@@ -101,6 +101,6 @@ endpoints:
         default: [
           "kimi-2.6"
         ]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "current_model"
