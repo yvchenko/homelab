@@ -13,9 +13,10 @@ endpoints:
       baseURL: "https://api.routeway.ai/v1"
       models:
         default: [
-          "step-3.5-flash:free"
+          "ling-2.6-flash:free",
+          "gpt-oss-120b:free"
           ]
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: "current_model"
 
@@ -24,9 +25,17 @@ endpoints:
       baseURL: 'https://openrouter.ai/api/v1'
       models:
         default: [
-          "openrouter/free"
+          "openrouter/free",
+          "xiaomi/mimo-v2.5",
+          "deepseek/deepseek-v4-flash",
+          "deepseek/deepseek-v4-pro"
+          "qwen/qwen3.6-35b-a3b",
+          "z-ai/glm-5.2",
+          "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "poolside/laguna-s-2.1:free",
+          "cohere/north-mini-code:free"
         ]
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: 'current_model'
       dropParams: ['stop']
@@ -37,7 +46,8 @@ endpoints:
       baseURL: "https://api.moonshot.ai/v1"
       models:
         default: [
-          "kimi-k2.5"
+          "kimi-k2.5",
+          "kimi-k2.6"
         ]
         fetch: true
       titleConvo: true
@@ -65,19 +75,17 @@ endpoints:
         ]
         fetch: true
 
-    - name: "Nvidia"
+    - name: "NVIDIA (all free)"
       apiKey: "user_provided"
       baseURL: "https://integrate.api.nvidia.com/v1/"
       models:
         default: [
           "minimaxai/minimax-m3",
-          "z-ai/glm-5.2",
-          "moonshotai/kimi-k2.6",
           "stepfun-ai/step-3.7-flash",
           "deepseek-ai/deepseek-v4-flash",
           "deepseek-ai/deepseek-v4-pro",
-          "openai/gpt-oss-120b",
           "mistralai/mistral-nemotron",
+          "z-ai/glm-5.2"
         ]
         fetch: false
       titleConvo: true
@@ -88,7 +96,9 @@ endpoints:
       apiKey: "user_provided"
       baseURL: "https://api.vultrinference.com/v1/"
       models:
-        default: ["kimi-2.6"]
-        fetch: true
+        default: [
+          "kimi-2.6"
+        ]
+        fetch: false
       titleConvo: true
       titleModel: "current_model"
