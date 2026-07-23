@@ -13,6 +13,7 @@ spec:
         app: radarr
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -55,6 +56,7 @@ spec:
         app: sonarr
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -97,6 +99,7 @@ spec:
         app: prowlarr
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -129,48 +132,6 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: bazarr
-  namespace: media-download
-spec:
-  selector:
-    matchLabels:
-      app: bazarr
-  template:
-    metadata:
-      labels:
-        app: bazarr
-    spec:
-      hostNetwork: true
-      nodeSelector:
-        arr-stack: "true"
-      containers:
-      - name: bazarr
-        image: lscr.io/linuxserver/bazarr:latest
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: Europe/Kiev
-        volumeMounts:
-        - name: config
-          mountPath: /config
-        - name: media
-          mountPath: /media
-      volumes:
-      - name: config
-        hostPath:
-          path: /opt/appdata/bazarr
-      - name: media
-        hostPath:
-          path: /mnt/media
-  updateStrategy:
-    type: RollingUpdate
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
   name: flaresolverr
   namespace: media-download
 spec:
@@ -183,6 +144,7 @@ spec:
         app: flaresolverr
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         arr-stack: "true"
       containers:
