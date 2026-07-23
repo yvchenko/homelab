@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: qbittorrent
   namespace: media-download
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: qbittorrent
@@ -15,7 +14,7 @@ spec:
     spec:
       hostNetwork: true
       nodeSelector:
-        disk: nat-media
+        qbittorrent: "true"
       containers:
       - name: qbittorrent
         image: lscr.io/linuxserver/qbittorrent:latest
@@ -40,5 +39,5 @@ spec:
       - name: config
         hostPath:
           path: /opt/appdata/qbittorrent
-  strategy:
-    type: Recreate
+  updateStrategy:
+    type: RollingUpdate
