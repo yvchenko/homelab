@@ -18,8 +18,8 @@ spec:
       dnsConfig:
         nameservers:
           - 100.100.100.100
-          - 212.230.135.1
-          - 212.230.135.2
+          - 1.1.1.1
+          - 1.0.0.1
         searches:
           - salmon-halfmoon.ts.net
       nodeSelector:
