@@ -1,0 +1,205 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: radarr
+  namespace: media-download
+spec:
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        arr-stack: "true"
+      containers:
+      - name: radarr
+        image: lscr.io/linuxserver/radarr:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: Europe/Kiev
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: media
+          mountPath: /media
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/radarr
+      - name: media
+        hostPath:
+          path: /mnt/media
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sonarr
+  namespace: media-download
+spec:
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        arr-stack: "true"
+      containers:
+      - name: sonarr
+        image: lscr.io/linuxserver/sonarr:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: Europe/Kiev
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: media
+          mountPath: /media
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/sonarr
+      - name: media
+        hostPath:
+          path: /mnt/media
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: prowlarr
+  namespace: media-download
+spec:
+  selector:
+    matchLabels:
+      app: prowlarr
+  template:
+    metadata:
+      labels:
+        app: prowlarr
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        arr-stack: "true"
+      securityContext:
+        sysctls:
+        - name: net.ipv6.conf.all.disable_ipv6
+          value: "1"
+      containers:
+      - name: prowlarr
+        image: lscr.io/linuxserver/prowlarr:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: Europe/Kiev
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: custom-indexer
+          mountPath: /config/Definitions/Custom/audiobookbay.yml
+          readOnly: true
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/prowlarr
+      - name: custom-indexer
+        hostPath:
+          path: /home/nat/homelab/services/audiobooks/prowlarr-custom/audiobookbay.yml
+          type: File
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: bazarr
+  namespace: media-download
+spec:
+  selector:
+    matchLabels:
+      app: bazarr
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        arr-stack: "true"
+      containers:
+      - name: bazarr
+        image: lscr.io/linuxserver/bazarr:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: Europe/Kiev
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: media
+          mountPath: /media
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/bazarr
+      - name: media
+        hostPath:
+          path: /mnt/media
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: flaresolverr
+  namespace: media-download
+spec:
+  selector:
+    matchLabels:
+      app: flaresolverr
+  template:
+    metadata:
+      labels:
+        app: flaresolverr
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        arr-stack: "true"
+      containers:
+      - name: flaresolverr
+        image: ghcr.io/flaresolverr/flaresolverr:latest
+        env:
+        - name: LOG_LEVEL
+          value: info
+        - name: LOG_HTML
+          value: "false"
+        - name: CAPTCHA_SOLVER
+          value: none
+        - name: TZ
+          value: Europe/Kiev
+  updateStrategy:
+    type: RollingUpdate
