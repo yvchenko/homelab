@@ -9,4 +9,4 @@ RUN apt-get update && \
 COPY danted.conf /etc/danted.conf
 
 EXPOSE 1080
-CMD ["danted", "-f", "/etc/danted.conf"]
+CMD ["sh", "-c", "ulimit -n 65536 && exec danted -f /etc/danted.conf"]
