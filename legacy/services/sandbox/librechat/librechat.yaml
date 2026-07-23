@@ -14,7 +14,7 @@ endpoints:
       models:
         default: [
           "ling-2.6-flash:free",
-          "gpt-oss-120b:free"
+          "gpt-oss-120b:free",
           ]
         fetch: false
       titleConvo: true
@@ -28,13 +28,13 @@ endpoints:
           "openrouter/free",
           "xiaomi/mimo-v2.5",
           "deepseek/deepseek-v4-flash",
-          "deepseek/deepseek-v4-pro"
+          "deepseek/deepseek-v4-pro",
           "qwen/qwen3.6-35b-a3b",
           "z-ai/glm-5.2",
           "nvidia/nemotron-3-ultra-550b-a55b:free",
           "poolside/laguna-s-2.1:free",
           "cohere/north-mini-code:free",
-          "cognitivecomputations/dolphin-mistral-24b-venice-edition"
+          "cognitivecomputations/dolphin-mistral-24b-venice-edition",
         ]
         fetch: false
       titleConvo: true
