@@ -13,7 +13,7 @@ spec:
         app: qbittorrent
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         qbittorrent: "true"
       containers:

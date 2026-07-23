@@ -14,7 +14,7 @@ spec:
         app: dante-proxy
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         disk: kostyan-media
       containers:

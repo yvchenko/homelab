@@ -13,7 +13,7 @@ spec:
         app: radarr
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -56,7 +56,7 @@ spec:
         app: sonarr
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -99,7 +99,7 @@ spec:
         app: prowlarr
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         arr-stack: "true"
       containers:
@@ -144,7 +144,7 @@ spec:
         app: flaresolverr
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       nodeSelector:
         arr-stack: "true"
       containers:
