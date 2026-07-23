@@ -49,22 +49,6 @@ services:
     networks:
       - media_download
 
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Kiev
-    volumes:
-      - /opt/appdata/bazarr:/config
-      - /mnt/media:/media
-    ports:
-      - 6767:6767
-    networks:
-      - media_download
-
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr

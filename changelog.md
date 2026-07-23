@@ -10,6 +10,7 @@
 - Added audiobooks service — Audiobookshelf, single instance on nat-server, attaches to media_download (external)
 - Custom Cardigann indexer definition for AudioBookBay, sourced from Jackett's maintained definition, mounted into Prowlarr
 - Dedicated audiobooks qBittorrent category for audiobook downloads, separate from general/arr-stack flow
+- Decommissioned Bazarr since it's useless after Jellyseerr removal
 
 ## 2026-07-12
 - Added media-sync cluster (syncthing, filebrowser, syncplay, samba) for cross-node file replication and synchronized co-viewing between nat-server and kostyan-server
