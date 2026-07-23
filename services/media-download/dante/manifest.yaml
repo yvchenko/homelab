@@ -14,7 +14,14 @@ spec:
         app: dante-proxy
     spec:
       hostNetwork: true
-      dnsPolicy: Default
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 100.100.100.100
+          - 212.230.135.1
+          - 212.230.135.2
+        searches:
+          - salmon-halfmoon.ts.net
       nodeSelector:
         disk: kostyan-media
       containers:
