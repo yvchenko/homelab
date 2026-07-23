@@ -28,7 +28,7 @@ services:
       - /opt/appdata/librechat/uploads:/app/uploads
       - /opt/appdata/librechat/logs:/app/logs
     env_file:
-      - ./.env
+      - .env
 
   mongodb:
     container_name: chat-mongodb

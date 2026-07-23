@@ -81,7 +81,7 @@ services:
 
   dante:
     build:
-      context: ./dante
+      context: dante
       args:
         DANTE_VERSION: ${DANTE_VERSION}
     container_name: dante-proxy

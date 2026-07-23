@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dante-proxy
+  namespace: media-download
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dante-proxy
+  template:
+    metadata:
+      labels:
+        app: dante-proxy
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        disk: kostyan-media
+      containers:
+      - name: dante
+        image: yvchenko/dante-proxy:latest
+  strategy:
+    type: Recreate
