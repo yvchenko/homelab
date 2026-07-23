@@ -99,10 +99,6 @@ spec:
       hostNetwork: true
       nodeSelector:
         arr-stack: "true"
-      securityContext:
-        sysctls:
-        - name: net.ipv6.conf.all.disable_ipv6
-          value: "1"
       containers:
       - name: prowlarr
         image: lscr.io/linuxserver/prowlarr:latest
