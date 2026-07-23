@@ -65,4 +65,23 @@ endpoints:
         ]
         fetch: true
 
+    - name: "Nvidia"
+      apiKey: "${NVIDIA_API_KEY}"
+      baseURL: "https://integrate.api.nvidia.com/v1/"
+      models:
+        default: [
+          "minimaxai/minimax-m3",
+          "z-ai/glm-5.2",
+          "moonshotai/kimi-k2.6",
+          "stepfun-ai/step-3.7-flash",
+          "deepseek-ai/deepseek-v4-flash",
+          "deepseek-ai/deepseek-v4-pro",
+          "qwen/qwen3.5-397b-a17b",
+          "openai/gpt-oss-120b",
+          "mistralai/mistral-nemotron",
+        ]
+        fetch: true
+      titleConvo: true
+      titleModel: "current_model"
+      modelDisplayLabel: "Nvidia"
 
