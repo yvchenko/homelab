@@ -85,7 +85,7 @@ endpoints:
       modelDisplayLabel: "Nvidia"
 
     - name: "Vultr Inference"
-      apiKey: "$user_provided"
+      apiKey: "user_provided"
       baseURL: "https://api.vultrinference.com/v1/"
       models:
         default: ["kimi-2.6"]
