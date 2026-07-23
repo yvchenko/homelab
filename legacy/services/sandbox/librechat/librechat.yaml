@@ -76,11 +76,10 @@ endpoints:
           "stepfun-ai/step-3.7-flash",
           "deepseek-ai/deepseek-v4-flash",
           "deepseek-ai/deepseek-v4-pro",
-          "qwen/qwen3.5-397b-a17b",
           "openai/gpt-oss-120b",
           "mistralai/mistral-nemotron",
         ]
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: "current_model"
       modelDisplayLabel: "Nvidia"
