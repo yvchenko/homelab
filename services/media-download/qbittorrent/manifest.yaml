@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent
+  namespace: media-download
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        disk: nat-media
+      containers:
+      - name: qbittorrent
+        image: lscr.io/linuxserver/qbittorrent:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: Europe/Kiev
+        - name: WEBUI_PORT
+          value: "8080"
+        volumeMounts:
+        - name: media
+          mountPath: /media
+        - name: config
+          mountPath: /config
+      volumes:
+      - name: media
+        hostPath:
+          path: /mnt/media
+      - name: config
+        hostPath:
+          path: /opt/appdata/qbittorrent
+  strategy:
+    type: Recreate
