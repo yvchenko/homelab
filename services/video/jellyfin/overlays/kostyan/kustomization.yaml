@@ -1,0 +1,12 @@
+resources:
+  - ../../base
+nameSuffix: "-kostyan"
+patches:
+  - target:
+      kind: Deployment
+      name: jellyfin
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          disk: kostyan-media
