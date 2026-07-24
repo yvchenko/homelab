@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-07-23
+- Migrated media-download cluster from Docker Compose to k3s: Dante, qBittorrent, Radarr, Sonarr, Prowlarr, FlareSolverr
+- Built and pushed custom Dante image to Docker Hub (`yvchenko/dante-proxy`)
+- Duplicated qBittorrent and the arr stack as DaemonSets across both nodes, matching existing per-node independence pattern
+- Fixed DNS resolution for hostNetwork pods (MagicDNS + general internet both failing under default dnsPolicy) via explicit `dnsPolicy: None` + `dnsConfig` with Tailscale + public resolvers
+
 ## 2026-07-22
 - Started migration to k3s
 - Installed k3s on both nodes, designated nat-server as control-plane and kostyan-server as a worker
