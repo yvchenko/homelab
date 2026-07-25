@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-07-24
+- Migrated arr stack (Radarr, Sonarr, Prowlarr, FlareSolverr) to k3s, resolving the DNS connectivity issues open at end of previous session
+- Migrated Jellyfin to k3s on both nodes; introduced Kustomize (base + per-node overlays) to handle nat-server's NVENC-specific config vs. gwserver's plain setup without duplicating manifests
+- Verified NVENC hardware transcoding working correctly post-migration via live ffmpeg transcode log
+- media-download and video clusters fully migrated off Docker Compose
+
 ## 2026-07-23
 - Migrated media-download cluster from Docker Compose to k3s: Dante, qBittorrent, Radarr, Sonarr, Prowlarr, FlareSolverr
 - Built and pushed custom Dante image to Docker Hub (`yvchenko/dante-proxy`)
