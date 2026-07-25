@@ -8,11 +8,12 @@ interface:
 endpoints:
   agents:
     disableModelSelect: false
+    model: "deepseek-v4-flash"
     models:
       default:
         - "deepseek-v4-flash"
-        - "kimi-k2.6"
-      fetch: true
+        - "kimi-k2.5"
+      fetch: false
   custom:
     - name: "Routeway"
       apiKey: "user_provided"
