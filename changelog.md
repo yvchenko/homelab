@@ -1,6 +1,10 @@
 # Project Changelog
 
 ## 2026-07-24
+- Updated LibreChat custom image to base off v0.8.7 (paired with config version v1.3.13) after. Reapplied bookmark patch logic.
+- Added a small doc on how to update the image in the future
+
+## 2026-07-24
 - Migrated arr stack (Radarr, Sonarr, Prowlarr, FlareSolverr) to k3s, resolving the DNS connectivity issues open at end of previous session
 - Migrated Jellyfin to k3s on both nodes; introduced Kustomize (base + per-node overlays) to handle nat-server's NVENC-specific config vs. gwserver's plain setup without duplicating manifests
 - Verified NVENC hardware transcoding working correctly post-migration via live ffmpeg transcode log
