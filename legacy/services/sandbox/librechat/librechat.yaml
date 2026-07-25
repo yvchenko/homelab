@@ -4,6 +4,7 @@ cache: true
 
 interface:
   bookmarks: true
+  agents: true
 
 endpoints:
   agents:
