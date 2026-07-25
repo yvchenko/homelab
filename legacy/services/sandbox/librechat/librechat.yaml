@@ -43,6 +43,7 @@ endpoints:
           "poolside/laguna-s-2.1:free",
           "cohere/north-mini-code:free",
           "cognitivecomputations/dolphin-mistral-24b-venice-edition",
+          "moonshotai/kimi-k2-0905"
         ]
         fetch: false
       titleConvo: true
