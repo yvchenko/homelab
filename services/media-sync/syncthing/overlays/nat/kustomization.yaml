@@ -15,9 +15,6 @@ patches:
         value:
           name: TZ
           value: Europe/Madrid
-      - op: replace
-        path: /spec/template/metadata/labels/app
-        value: syncthing-nat
       - op: add
         path: /spec/template/spec/hostname
         value: nat-server-syncthing

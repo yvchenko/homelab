@@ -15,9 +15,6 @@ patches:
         value:
           name: TZ
           value: Europe/Kyiv
-      - op: replace
-        path: /spec/template/metadata/labels/app
-        value: syncthing-kostyan
       - op: add
         path: /spec/template/spec/hostname
         value: kostyan-server-syncthing
