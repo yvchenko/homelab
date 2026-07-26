@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-07-26
+- Migrated smart-home (ESPHome) to k3s; introduced a throwaway Job pattern for one-time USB flashing instead of editing the main manifest
+- Migrated media-sync cluster to k3s: Syncthing, Filebrowser, Syncplay, Samba (Kustomize overlays for Syncthing/Samba's per-node config, plain DaemonSets for Filebrowser/Syncplay)
+- Adopted Secrets for all credential values going forward, replacing plaintext `.env` entries
+- smart-home and media-sync clusters fully migrated off Docker Compose
+
 ## 2026-07-24
 - Updated LibreChat custom image to base off v0.8.7 (paired with config version v1.3.13) after. Reapplied bookmark patch logic.
 - Added a small doc on how to update the image in the future
