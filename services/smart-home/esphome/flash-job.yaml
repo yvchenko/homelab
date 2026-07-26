@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: esphome-flash
+  namespace: smart-home
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        disk: kostyan-media
+      containers:
+      - name: esphome-flash
+        image: ghcr.io/esphome/esphome
+        securityContext:
+          privileged: true
+        envFrom:
+        - secretRef:
+            name: esphome-credentials
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: usb
+          mountPath: /dev/ttyUSB0
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/smart-home
+      - name: usb
+        hostPath:
+          path: /dev/ttyUSB0
