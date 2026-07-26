@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncthing
+  namespace: media-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: syncthing
+  template:
+    metadata:
+      labels:
+        app: syncthing
+    spec:
+      hostNetwork: true
+      containers:
+      - name: syncthing
+        image: syncthing/syncthing:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - name: config
+          mountPath: /var/syncthing/config
+        - name: shared
+          mountPath: /var/syncthing/shared
+        - name: cloud
+          mountPath: /var/syncthing/cloud
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/syncthing
+      - name: shared
+        hostPath:
+          path: /mnt/media/shared
+      - name: cloud
+        hostPath:
+          path: /mnt/media/cloud
+  strategy:
+    type: Recreate

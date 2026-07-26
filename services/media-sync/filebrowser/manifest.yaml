@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: filebrowser
+  namespace: media-sync
+spec:
+  selector:
+    matchLabels:
+      app: filebrowser
+  template:
+    metadata:
+      labels:
+        app: filebrowser
+    spec:
+      nodeSelector:
+        media-sync: "true"
+      containers:
+      - name: filebrowser
+        image: filebrowser/filebrowser:latest
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        ports:
+        - containerPort: 80
+          hostPort: 8082
+        volumeMounts:
+        - name: cloud
+          mountPath: /srv
+        - name: database
+          mountPath: /database
+        - name: settings
+          mountPath: /config/settings.json
+          subPath: settings.json
+          readOnly: true
+      volumes:
+      - name: cloud
+        hostPath:
+          path: /mnt/media/cloud
+      - name: database
+        hostPath:
+          path: /opt/appdata/filebrowser
+      - name: settings
+        configMap:
+          name: filebrowser-settings
+  updateStrategy:
+    type: RollingUpdate

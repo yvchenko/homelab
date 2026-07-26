@@ -1,0 +1,23 @@
+resources:
+  - ../../base
+nameSuffix: "-nat"
+patches:
+  - target:
+      kind: Deployment
+      name: samba
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          disk: nat-media
+      - op: replace
+        path: /spec/template/spec/containers/0/ports/0
+        value:
+          containerPort: 445
+          hostPort: 445
+          hostIP: 100.83.164.52
+      - op: add
+        path: /spec/template/spec/containers/0/envFrom
+        value:
+          - secretRef:
+              name: samba-credentials-nat

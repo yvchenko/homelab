@@ -1,0 +1,23 @@
+resources:
+  - ../../base
+nameSuffix: "-kostyan"
+patches:
+  - target:
+      kind: Deployment
+      name: syncthing
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          disk: kostyan-media
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: TZ
+          value: Europe/Kyiv
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: syncthing-kostyan
+      - op: add
+        path: /spec/template/spec/hostname
+        value: kostyan-server-syncthing

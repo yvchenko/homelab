@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba
+  namespace: media-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samba
+  template:
+    metadata:
+      labels:
+        app: samba
+    spec:
+      containers:
+      - name: samba
+        image: dockurr/samba:latest
+        env:
+        - name: NAME
+          value: shared
+        - name: UID
+          value: "1000"
+        - name: GID
+          value: "1000"
+        ports:
+        - containerPort: 445
+        volumeMounts:
+        - name: storage
+          mountPath: /storage
+      volumes:
+      - name: storage
+        hostPath:
+          path: /mnt/media/shared
+  strategy:
+    type: Recreate

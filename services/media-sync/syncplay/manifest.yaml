@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: syncplay
+  namespace: media-sync
+spec:
+  selector:
+    matchLabels:
+      app: syncplay
+  template:
+    metadata:
+      labels:
+        app: syncplay
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        media-sync: "true"
+      containers:
+      - name: syncplay
+        image: dnomd343/syncplay:latest
+        env:
+        - name: PORT
+          value: "8999"
+        - name: PERSISTENT
+          value: "ON"
+        envFrom:
+        - secretRef:
+            name: syncplay-credentials
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        hostPath:
+          path: /opt/appdata/syncplay
+  updateStrategy:
+    type: RollingUpdate

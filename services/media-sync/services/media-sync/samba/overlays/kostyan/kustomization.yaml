@@ -1,0 +1,23 @@
+resources:
+  - ../../base
+nameSuffix: "-kostyan"
+patches:
+  - target:
+      kind: Deployment
+      name: samba
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          disk: kostyan-media
+      - op: replace
+        path: /spec/template/spec/containers/0/ports/0
+        value:
+          containerPort: 445
+          hostPort: 445
+          hostIP: 100.83.127.86
+      - op: add
+        path: /spec/template/spec/containers/0/envFrom
+        value:
+          - secretRef:
+              name: samba-credentials-kostyan

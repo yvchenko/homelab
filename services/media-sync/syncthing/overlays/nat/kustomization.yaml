@@ -1,0 +1,23 @@
+resources:
+  - ../../base
+nameSuffix: "-nat"
+patches:
+  - target:
+      kind: Deployment
+      name: syncthing
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          disk: nat-media
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: TZ
+          value: Europe/Madrid
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: syncthing-nat
+      - op: add
+        path: /spec/template/spec/hostname
+        value: nat-server-syncthing
