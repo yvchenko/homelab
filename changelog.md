@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-07-27
+- Fixed agent/skill 403 errors and stale bookmark tag-filter behavior: root cause was `Dockerfile.custom` overlaying a couple of `dist/` folders onto a pinned, stale `ghcr.io/danny-avila/librechat:latest` image instead of building from source. Switched `docker-compose.override.yml` to build from the real multi-stage `Dockerfile` against local source instead.
+- Removed obsolete `patches/data-schemas-methods/conversation.cjs` and `conversation.es.js` — the fix is already present upstream in current source.
+- Rebuilt and pushed updated image to `yvchenko/librechat-custom-tagging:latest` - the official one was not updated with tag logic change.
+- Split creative-writing prompt (prose style + content freedom) out of per-chat parameters into two standalone LibreChat Skills (`always-apply: true`) in the sandbox project.
+
 ## 2026-07-26
 - Migrated smart-home (ESPHome) to k3s; introduced a throwaway Job pattern for one-time USB flashing instead of editing the main manifest
 - Migrated media-sync cluster to k3s: Syncthing, Filebrowser, Syncplay, Samba (Kustomize overlays for Syncthing/Samba's per-node config, plain DaemonSets for Filebrowser/Syncplay)

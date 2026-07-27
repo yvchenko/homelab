@@ -1,4 +1,4 @@
-# Updating LibreChat custom image
+ Updating LibreChat custom image
 
 ## 1. Pull Fresh Upstream Code
 
