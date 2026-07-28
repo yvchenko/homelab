@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+  namespace: sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-api
+  template:
+    metadata:
+      labels:
+        app: rag-api
+    spec:
+      nodeSelector:
+        disk: nat-media
+      containers:
+      - name: rag-api
+        image: registry.librechat.ai/danny-avila/librechat-rag-api-dev-lite:latest
+        env:
+        - name: DB_HOST
+          value: vectordb
+        - name: RAG_PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000
+  strategy:
+    type: Recreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-api
+  namespace: sandbox
+spec:
+  selector:
+    app: rag-api
+  ports:
+  - port: 8000
+    targetPort: 8000

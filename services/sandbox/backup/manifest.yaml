@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup
+  namespace: sandbox
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          nodeSelector:
+            disk: nat-media
+          initContainers:
+          - name: mongodump
+            image: mongo:8.0.20
+            command:
+            - sh
+            - -c
+            - |
+              TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+              mongodump --host mongodb --port 27017 --db LibreChat --archive --gzip > /backups/mongo_${TIMESTAMP}.gz
+              echo "$TIMESTAMP" > /backups/.last_timestamp
+            volumeMounts:
+            - name: backups
+              mountPath: /backups
+          containers:
+          - name: rclone-sync
+            image: rclone/rclone:latest
+            command:
+            - sh
+            - -c
+            - |
+              TIMESTAMP=$(cat /backups/.last_timestamp)
+              rclone copy /backups nat:homelab-backups/nat-server --include "mongo_${TIMESTAMP}.gz" --log-level INFO
+              find /backups -name "mongo_*.gz" -mtime +5 -delete
+              rclone delete nat:homelab-backups/nat-server --min-age 30d --include "mongo_*.gz" --log-level INFO
+            volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: rclone-config
+              mountPath: /config/rclone/rclone.conf
+              subPath: rclone.conf
+              readOnly: true
+          volumes:
+          - name: backups
+            hostPath:
+              path: /opt/backups
+          - name: rclone-config
+            hostPath:
+              path: /opt/rclone/rclone.conf

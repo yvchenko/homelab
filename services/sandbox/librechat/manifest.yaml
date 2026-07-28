@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: librechat
+  namespace: sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: librechat
+  template:
+    metadata:
+      labels:
+        app: librechat
+    spec:
+      nodeSelector:
+        disk: nat-media
+      containers:
+      - name: librechat
+        image: yvchenko/librechat-custom-tagging:latest
+        env:
+        - name: HOST
+          value: "0.0.0.0"
+        - name: MONGO_URI
+          value: mongodb://mongodb:27017/LibreChat
+        - name: MEILI_HOST
+          value: http://meilisearch:7700
+        - name: RAG_PORT
+          value: "8000"
+        - name: RAG_API_URL
+          value: http://rag-api:8000
+        envFrom:
+        - configMapRef:
+            name: librechat-env
+        - secretRef:
+            name: librechat-secrets
+        ports:
+        - containerPort: 3080
+          hostPort: 3080
+        volumeMounts:
+        - name: librechat-config
+          mountPath: /app/librechat.yaml
+          subPath: librechat.yaml
+          readOnly: true
+        - name: images
+          mountPath: /app/client/public/images
+        - name: uploads
+          mountPath: /app/uploads
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: librechat-config
+        configMap:
+          name: librechat-config
+      - name: images
+        hostPath:
+          path: /opt/appdata/librechat/images
+      - name: uploads
+        hostPath:
+          path: /opt/appdata/librechat/uploads
+      - name: logs
+        hostPath:
+          path: /opt/appdata/librechat/logs
+  strategy:
+    type: Recreate

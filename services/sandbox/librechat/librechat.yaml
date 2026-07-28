@@ -1,0 +1,115 @@
+version: 1.3.13
+
+cache: true
+
+interface:
+  bookmarks: true
+  agents: true
+
+endpoints:
+  agents:
+    disableModelSelect: false
+    model: "deepseek-v4-flash"
+    models:
+      default:
+        - "deepseek-v4-flash"
+        - "kimi-k2.5"
+      fetch: false
+  custom:
+    - name: "Routeway"
+      apiKey: "user_provided"
+      baseURL: "https://api.routeway.ai/v1"
+      models:
+        default: [
+          "ling-2.6-flash:free",
+          "gpt-oss-120b:free",
+          ]
+        fetch: false
+      titleConvo: true
+      titleModel: "current_model"
+
+    - name: 'OpenRouter'
+      apiKey: 'user_provided'
+      baseURL: 'https://openrouter.ai/api/v1'
+      models:
+        default: [
+          "openrouter/free",
+          "xiaomi/mimo-v2.5",
+          "deepseek/deepseek-v4-flash",
+          "deepseek/deepseek-v4-pro",
+          "qwen/qwen3.6-35b-a3b",
+          "z-ai/glm-5.2",
+          "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "poolside/laguna-s-2.1:free",
+          "cohere/north-mini-code:free",
+          "cognitivecomputations/dolphin-mistral-24b-venice-edition",
+          "moonshotai/kimi-k2-0905"
+        ]
+        fetch: false
+      titleConvo: true
+      titleModel: 'current_model'
+      dropParams: ['stop']
+      modelDisplayLabel: 'OpenRouter'
+
+    - name: "Moonshot AI"
+      apiKey: "user_provided"
+      baseURL: "https://api.moonshot.ai/v1"
+      models:
+        default: [
+          "kimi-k2.5",
+          "kimi-k2.6",
+          "moonshotai/kimi-k2.7-code"
+        ]
+        fetch: false
+      titleConvo: true
+      titleModel: "current_model"
+
+    - name: "DeepSeek"
+      apiKey: "user_provided"
+      baseURL: "https://api.deepseek.com/v1"
+      models:
+        default: [
+          "deepseek-v4-flash",
+          "deepseek-v4-pro"
+        ]
+        fetch: true
+      titleConvo: true
+      titleModel: "current_model"
+
+    - name: "Venice"
+      apiKey: "user_provided"
+      baseURL: "https://api.venice.ai/api/v1"
+      models:
+        default: [
+          "venice-uncensored-1-2",
+          "venice-uncensored-role-play"
+        ]
+        fetch: false
+
+    - name: "NVIDIA (all free)"
+      apiKey: "user_provided"
+      baseURL: "https://integrate.api.nvidia.com/v1/"
+      models:
+        default: [
+          "minimaxai/minimax-m3",
+          "stepfun-ai/step-3.7-flash",
+          "deepseek-ai/deepseek-v4-flash",
+          "deepseek-ai/deepseek-v4-pro",
+          "mistralai/mistral-nemotron",
+          "z-ai/glm-5.2"
+        ]
+        fetch: false
+      titleConvo: true
+      titleModel: "current_model"
+      modelDisplayLabel: "Nvidia"
+
+    - name: "Vultr Inference"
+      apiKey: "user_provided"
+      baseURL: "https://api.vultrinference.com/v1/"
+      models:
+        default: [
+          "kimi-2.6"
+        ]
+        fetch: true
+      titleConvo: true
+      titleModel: "current_model"

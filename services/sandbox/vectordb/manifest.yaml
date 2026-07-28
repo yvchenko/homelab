@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vectordb
+  namespace: sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vectordb
+  template:
+    metadata:
+      labels:
+        app: vectordb
+    spec:
+      nodeSelector:
+        disk: nat-media
+      containers:
+      - name: vectordb
+        image: pgvector/pgvector:0.8.0-pg15-trixie
+        envFrom:
+        - secretRef:
+            name: vectordb-secrets
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: data
+        hostPath:
+          path: /opt/appdata/librechat/pgdata
+  strategy:
+    type: Recreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vectordb
+  namespace: sandbox
+spec:
+  selector:
+    app: vectordb
+  ports:
+  - port: 5432
+    targetPort: 5432
