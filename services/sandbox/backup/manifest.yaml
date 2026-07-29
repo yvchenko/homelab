@@ -4,7 +4,7 @@ metadata:
   name: mongo-backup
   namespace: sandbox
 spec:
-  schedule: "0 3 * * *"
+  schedule: "56 6 * * *"
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -16,27 +16,14 @@ spec:
           initContainers:
           - name: mongodump
             image: mongo:8.0.20
-            command:
-            - sh
-            - -c
-            - |
-              TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-              mongodump --host mongodb --port 27017 --db LibreChat --archive --gzip > /backups/mongo_${TIMESTAMP}.gz
-              echo "$TIMESTAMP" > /backups/.last_timestamp
+            command: ["sh", "/scripts/mongo-backup.sh"]
             volumeMounts:
             - name: backups
               mountPath: /backups
           containers:
           - name: rclone-sync
             image: rclone/rclone:latest
-            command:
-            - sh
-            - -c
-            - |
-              TIMESTAMP=$(cat /backups/.last_timestamp)
-              rclone copy /backups nat:homelab-backups/nat-server --include "mongo_${TIMESTAMP}.gz" --log-level INFO
-              find /backups -name "mongo_*.gz" -mtime +5 -delete
-              rclone delete nat:homelab-backups/nat-server --min-age 30d --include "mongo_*.gz" --log-level INFO
+            command: ["sh", "/scripts/rclone-sync.sh"]
             volumeMounts:
             - name: backups
               mountPath: /backups
