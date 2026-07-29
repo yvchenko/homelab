@@ -27,14 +27,12 @@ spec:
             image: rclone/rclone:latest
             command: ["sh", "/scripts/rclone-sync.sh"]
             volumeMounts:
-            - name: backups
-              mountPath: /backups
-            - name: rclone-config
-              mountPath: /config/rclone/rclone.conf
-              subPath: rclone.conf
-              readOnly: true
-            - name: scripts
-              mountPath: /scripts
+              - name: backups
+                mountPath: /backups
+              - name: rclone-config
+                mountPath: /config/rclone/rclone.conf
+              - name: scripts
+                mountPath: /scripts
           volumes:
           - name: backups
             hostPath:
