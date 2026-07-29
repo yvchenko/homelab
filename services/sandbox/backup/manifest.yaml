@@ -4,7 +4,7 @@ metadata:
   name: mongo-backup
   namespace: sandbox
 spec:
-  schedule: "56 6 * * *"
+  schedule: "57 6 * * *"
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -20,6 +20,8 @@ spec:
             volumeMounts:
             - name: backups
               mountPath: /backups
+            - name: scripts
+              mountPath: /scripts
           containers:
           - name: rclone-sync
             image: rclone/rclone:latest
@@ -31,6 +33,8 @@ spec:
               mountPath: /config/rclone/rclone.conf
               subPath: rclone.conf
               readOnly: true
+            - name: scripts
+              mountPath: /scripts
           volumes:
           - name: backups
             hostPath:
@@ -38,3 +42,7 @@ spec:
           - name: rclone-config
             hostPath:
               path: /opt/rclone/rclone.conf
+          - name: scripts
+            configMap:
+              name: mongo-backup-scripts
+              defaultMode: 0755
