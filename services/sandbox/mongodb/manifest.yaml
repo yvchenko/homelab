@@ -17,7 +17,7 @@ spec:
         disk: nat-media
       containers:
       - name: mongodb
-        image: mongo:8.0.20
+        image: mongo:8.0.4
         command: ["mongod", "--noauth", "--bind_ip_all"]
         ports:
         - containerPort: 27017
