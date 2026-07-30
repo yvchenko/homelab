@@ -25,13 +25,13 @@ spec:
             - name: scripts
               mountPath: /scripts
           volumes:
-          - name: media
-            hostPath:
-              path: /mnt/media
-          - name: varlog
+            - name: media
               hostPath:
-              path: /var/log
-          - name: scripts
-            configMap:
-              name: suwayomi-move-script
-              defaultMode: 0755
+                path: /mnt/media
+            - name: varlog
+              hostPath:
+                path: /var/log
+            - name: scripts
+              configMap:
+                name: suwayomi-move-script
+                defaultMode: 0755
