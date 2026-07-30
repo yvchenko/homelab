@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: suwayomi-move
+  namespace: reading-library
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          nodeSelector:
+            disk: kostyan-media
+          containers:
+          - name: suwayomi-move
+            image: bash:5
+            command: ["bash", "/scripts/suwayomi-move.sh"]
+            volumeMounts:
+            - name: media
+              mountPath: /mnt/media
+            - name: varlog
+              mountPath: /var/log
+            - name: scripts
+              mountPath: /scripts
+          volumes:
+          - name: media
+            hostPath:
+              path: /mnt/media
+          - name: varlog
+              hostPath:
+              path: /var/log
+          - name: scripts
+            configMap:
+              name: suwayomi-move-script
+              defaultMode: 0755

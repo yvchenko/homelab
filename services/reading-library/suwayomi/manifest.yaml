@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suwayomi
+  namespace: reading-library
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suwayomi
+  template:
+    metadata:
+      labels:
+        app: suwayomi
+    spec:
+      hostNetwork: true
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 100.100.100.100
+          - 1.1.1.1
+          - 1.0.0.1
+        searches:
+          - salmon-halfmoon.ts.net
+      nodeSelector:
+        disk: kostyan-media
+      containers:
+      - name: suwayomi
+        image: ghcr.io/suwayomi/suwayomi-server:stable
+        env:
+        - name: TZ
+          value: Europe/Kiev
+        - name: FLARESOLVERR_ENABLED
+          value: "true"
+        - name: FLARESOLVERR_URL
+          value: http://localhost:8191
+        volumeMounts:
+        - name: downloads
+          mountPath: /home/suwayomi/.local/share/Tachidesk/downloads
+        - name: config
+          mountPath: /home/suwayomi/.local/share/Tachidesk
+      volumes:
+      - name: downloads
+        hostPath:
+          path: /mnt/media/suwayomi
+      - name: config
+        hostPath:
+          path: /opt/appdata/suwayomi
+  strategy:
+    type: Recreate

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kavita
+  namespace: reading-library
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kavita
+  template:
+    metadata:
+      labels:
+        app: kavita
+    spec:
+      nodeSelector:
+        disk: kostyan-media
+      containers:
+      - name: kavita
+        image: jvmilazz0/kavita:0.9.0
+        env:
+        - name: TZ
+          value: Europe/Kiev
+        ports:
+        - containerPort: 5000
+          hostPort: 5000
+        volumeMounts:
+        - name: config
+          mountPath: /kavita/config
+        - name: books
+          mountPath: /media/books
+        - name: manga
+          mountPath: /media/manga
+        - name: danmei
+          mountPath: /media/danmei
+        - name: ranobe
+          mountPath: /media/ranobe
+        - name: comics
+          mountPath: /media/comics
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/kavita
+      - name: books
+        hostPath:
+          path: /mnt/media/books
+      - name: manga
+        hostPath:
+          path: /mnt/media/manga
+      - name: danmei
+        hostPath:
+          path: /mnt/media/danmei
+      - name: ranobe
+        hostPath:
+          path: /mnt/media/ranobe
+      - name: comics
+        hostPath:
+          path: /mnt/media/comics
+  strategy:
+    type: Recreate
