@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-07-29 (cont.)
+- Migrated reading-library cluster to k3s: Kavita, Suwayomi, suwayomi-move (rebuilt as a CronJob)
+- Switched Kavita from jvmilazz0/kavita to linuxserver/kavita:0.8.9 for better maintenance/security patching; config path migrated (/kavita/config → /config), library and settings confirmed intact
+- Suwayomi reaches FlareSolverr via localhost, reusing the arr-stack's existing per-node instance instead of a cross-namespace Service
+- Migrated audiobooks cluster to k3s: Audiobookshelf
+- All planned clusters (media-download, video, smart-home, media-sync, sandbox, reading-library, audiobooks) now fully migrated off Docker Compose to k3s
+
 ## 2026-07-29
 - Migrated sandbox cluster to k3s: LibreChat, MongoDB, Meilisearch, vectordb (pgvector), rag_api
 - Moved vectordb's Postgres credentials off plaintext compose config into a Secret
