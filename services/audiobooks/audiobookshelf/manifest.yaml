@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audiobookshelf
+  namespace: audiobooks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookshelf
+  template:
+    metadata:
+      labels:
+        app: audiobookshelf
+    spec:
+      nodeSelector:
+        disk: nat-media
+      containers:
+      - name: audiobookshelf
+        image: ghcr.io/advplyr/audiobookshelf:latest
+        env:
+        - name: TZ
+          value: Europe/Madrid
+        ports:
+        - containerPort: 80
+          hostPort: 13378
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: metadata
+          mountPath: /metadata
+        - name: audiobooks
+          mountPath: /audiobooks
+      volumes:
+      - name: config
+        hostPath:
+          path: /opt/appdata/audiobookshelf
+      - name: metadata
+        hostPath:
+          path: /opt/appdata/audiobookshelf/metadata
+      - name: audiobooks
+        hostPath:
+          path: /mnt/media/audiobooks
+  strategy:
+    type: Recreate
