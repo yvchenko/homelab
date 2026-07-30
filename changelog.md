@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-07-29
+- Migrated sandbox cluster to k3s: LibreChat, MongoDB, Meilisearch, vectordb (pgvector), rag_api
+- Moved vectordb's Postgres credentials off plaintext compose config into a Secret
+- Rebuilt the Mongo backup pipeline as a CronJob, replacing backup_mongo.sh + system cron
+- sandbox cluster fully migrated off Docker Compose
+
 ## 2026-07-27
 - Fixed agent/skill 403 errors and stale bookmark tag-filter behavior: root cause was `Dockerfile.custom` overlaying a couple of `dist/` folders onto a pinned, stale `ghcr.io/danny-avila/librechat:latest` image instead of building from source. Switched `docker-compose.override.yml` to build from the real multi-stage `Dockerfile` against local source instead.
 - Removed obsolete `patches/data-schemas-methods/conversation.cjs` and `conversation.es.js` — the fix is already present upstream in current source.
