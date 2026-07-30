@@ -17,8 +17,12 @@ spec:
         disk: kostyan-media
       containers:
       - name: kavita
-        image: jvmilazz0/kavita:0.9.0
+        image: lscr.io/linuxserver/kavita:0.8.9
         env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
         - name: TZ
           value: Europe/Kiev
         ports:
@@ -26,7 +30,7 @@ spec:
           hostPort: 5000
         volumeMounts:
         - name: config
-          mountPath: /kavita/config
+          mountPath: /config
         - name: books
           mountPath: /media/books
         - name: manga
