@@ -40,6 +40,7 @@ spec:
     spec:
       nodeSelector:
         gpu: nvidia-gtx1060
+      runtimeClassName: nvidia
       hostNetwork: true
 
       # -----------------------------------------------------------------------
@@ -61,6 +62,9 @@ spec:
         - name: audio-socket
           hostPath:
             path: /tmp/pulse
+        - name: dri
+          hostPath:
+            path: /dev/dri
         - name: steam-home
           hostPath:
             path: /mnt/media/steam
@@ -117,6 +121,8 @@ spec:
               mountPath: /tmp/.X11-unix
             - name: var-log
               mountPath: /var/log
+            - name: dri
+              mountPath: /dev/dri
 
         # ===========================================================================
         # pulseaudio — virtual audio sink, shared over a unix socket
@@ -194,6 +200,8 @@ spec:
               readOnly: true
             - name: xorg
               mountPath: /tmp/.X11-unix
+            - name: dri
+              mountPath: /dev/dri
             - name: steam-home
               mountPath: /home/retro/
               subPath: sunshine
@@ -227,6 +235,8 @@ spec:
               readOnly: true
             - name: xorg
               mountPath: /tmp/.X11-unix
+            - name: dri
+              mountPath: /dev/dri
             - name: steam-home
               mountPath: /home/retro/
               subPath: steam
