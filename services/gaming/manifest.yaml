@@ -75,6 +75,8 @@ spec:
         - name: nvidia-driver
           hostPath:
             path: /opt/gow-nvidia-driver
+        - name: egl-external-platform-d
+          emptyDir: {}
         - name: steam-home
           hostPath:
             path: /mnt/media/steam
@@ -258,6 +260,8 @@ spec:
               mountPath: /dev/dri
             - name: nvidia-driver
               mountPath: /usr/nvidia
+            - name: egl-external-platform-d
+              mountPath: /usr/share/egl/egl_external_platform.d
             - name: steam-home
               mountPath: /home/retro/
               subPath: steam
