@@ -37,6 +37,8 @@ spec:
       labels:
         app.kubernetes.io/instance: steam
         app.kubernetes.io/name: steam
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/steam: unconfined
     spec:
       nodeSelector:
         gpu: nvidia-gtx1060
@@ -224,7 +226,6 @@ spec:
           image: gameonwhales/steam:latest
           securityContext:
             privileged: true
-          command: ["sleep", "infinity"]  # TEMP: debugging GL/driver loading
           envFrom:
             - configMapRef:
                 name: gaming-env
