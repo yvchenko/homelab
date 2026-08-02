@@ -1,6 +1,13 @@
 # =============================================================================
+# gaming/manifest.yaml
+#
 # Single Pod, 4 containers (xorg, pulseaudio, sunshine, steam) sharing X11 and
-# audio sockets via hostPath volumes. Pinned to nat-server via nodeSelector.
+# audio sockets via hostPath volumes. Kubernetes requires all containers in a
+# Pod to live in one Deployment object — this can't be split across files
+# without introducing Kustomize overlays that wouldn't reflect real config
+# divergence (see repo convention: Kustomize only where node specs genuinely
+# differ). Pinned to nat-server via nodeSelector since it's the only node
+# with a GPU.
 #
 # pulse-audio-config ConfigMap lives in platform/bootstrap/ (shared plumbing,
 # applied once, not gaming-specific).
@@ -226,6 +233,7 @@ spec:
             privileged: true
             appArmorProfile:
               type: Unconfined
+          command: ["sleep", "infinity"]  # TEMP: checking nsswitch.conf
           envFrom:
             - configMapRef:
                 name: gaming-env
