@@ -65,6 +65,9 @@ spec:
         - name: dri
           hostPath:
             path: /dev/dri
+        - name: nvidia-driver
+          hostPath:
+            path: /opt/gow-nvidia-driver
         - name: steam-home
           hostPath:
             path: /mnt/media/steam
@@ -123,6 +126,8 @@ spec:
               mountPath: /var/log
             - name: dri
               mountPath: /dev/dri
+            - name: nvidia-driver
+              mountPath: /usr/nvidia
 
         # ===========================================================================
         # pulseaudio — virtual audio sink, shared over a unix socket
