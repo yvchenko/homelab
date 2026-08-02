@@ -16,7 +16,6 @@ isn't owned by either.
 | Radarr       | http://kostyan-server.salmon-halfmoon.ts.net:7878     | http://nat-server.salmon-halfmoon.ts.net:7878     |
 | Sonarr       | http://kostyan-server.salmon-halfmoon.ts.net:8989     | http://nat-server.salmon-halfmoon.ts.net:8989     |
 | Prowlarr     | http://kostyan-server.salmon-halfmoon.ts.net:9696     | http://nat-server.salmon-halfmoon.ts.net:9696     |
-| Bazarr       | http://kostyan-server.salmon-halfmoon.ts.net:6767     | http://nat-server.salmon-halfmoon.ts.net:6767     |
 | QBittorrent  | http://kostyan-server.salmon-halfmoon.ts.net:8080     | http://nat-server.salmon-halfmoon.ts.net:8080     |
 
 ### media-sync

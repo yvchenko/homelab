@@ -1,6 +1,10 @@
 # Project Changelog
 
-## 2026-07-29 (cont.)
+## 2026-07-30
+- Updated post-migration docs for every service
+- Documented k3s migration process
+
+## 2026-07-30
 - Migrated reading-library cluster to k3s: Kavita, Suwayomi, suwayomi-move (rebuilt as a CronJob)
 - Switched Kavita from jvmilazz0/kavita to linuxserver/kavita:0.8.9 for better maintenance/security patching; config path migrated (/kavita/config → /config), library and settings confirmed intact
 - Suwayomi reaches FlareSolverr via localhost, reusing the arr-stack's existing per-node instance instead of a cross-namespace Service

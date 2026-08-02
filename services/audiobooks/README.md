@@ -2,12 +2,6 @@
 
 Self-hosted audiobook library with client-side caching for offline listening.
 
-## Access
-
-| Service        | URL                                              |
-| -------------- | ------------------------------------------------ |
-| Audiobookshelf | `http://nat-server.salmon-halfmoon.ts.net:13378` |
-
 ## Stack
 
 | Service        | Image                                   | Notes                                       |
