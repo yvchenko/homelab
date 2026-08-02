@@ -224,7 +224,6 @@ spec:
           image: gameonwhales/steam:latest
           securityContext:
             privileged: true
-          command: ["sleep", "infinity"]  # TEMP: debugging why the real entrypoint exits cleanly, remove once resolved
           envFrom:
             - configMapRef:
                 name: gaming-env
@@ -246,6 +245,8 @@ spec:
               mountPath: /tmp/.X11-unix
             - name: dri
               mountPath: /dev/dri
+            - name: nvidia-driver
+              mountPath: /usr/nvidia
             - name: steam-home
               mountPath: /home/retro/
               subPath: steam
