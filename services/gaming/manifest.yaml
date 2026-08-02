@@ -224,6 +224,7 @@ spec:
           image: gameonwhales/steam:latest
           securityContext:
             privileged: true
+          command: ["sleep", "infinity"]  # TEMP: debugging why the real entrypoint exits cleanly, remove once resolved
           envFrom:
             - configMapRef:
                 name: gaming-env
