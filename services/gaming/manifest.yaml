@@ -228,12 +228,9 @@ spec:
         # (the 1060 only has one GPU to hand out — two claims in one pod won't schedule)
         # ===========================================================================
         - name: steam
-          image: gameonwhales/steam:latest
+          image: gameonwhales/steam:fedora
           securityContext:
             privileged: true
-            appArmorProfile:
-              type: Unconfined
-          command: ["sleep", "infinity"]  # TEMP: checking nsswitch.conf
           envFrom:
             - configMapRef:
                 name: gaming-env
