@@ -224,6 +224,7 @@ spec:
           image: gameonwhales/steam:latest
           securityContext:
             privileged: true
+          command: ["sleep", "infinity"]  # TEMP: debugging GL/driver loading
           envFrom:
             - configMapRef:
                 name: gaming-env
