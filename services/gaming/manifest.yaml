@@ -1,0 +1,232 @@
+# =============================================================================
+# Single Pod, 4 containers (xorg, pulseaudio, sunshine, steam) sharing X11 and
+# audio sockets via hostPath volumes. Pinned to nat-server via nodeSelector.
+#
+# pulse-audio-config ConfigMap lives in platform/bootstrap/ (shared plumbing,
+# applied once, not gaming-specific).
+#
+# Non-secret env vars for sunshine + steam are injected via envFrom from the
+# gaming-env ConfigMap (generated from the committed gaming.env):
+#   kubectl create configmap gaming-env --namespace gaming --from-env-file=gaming.env
+#
+# SUNSHINE_PASS is injected via envFrom from a Secret, created imperatively
+# and never committed:
+#   kubectl create secret generic sunshine-creds --namespace gaming --from-literal=SUNSHINE_PASS=<value>
+#
+# Both must exist in the gaming namespace before this Deployment is applied.
+# =============================================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: steam
+  namespace: gaming
+  labels:
+    app.kubernetes.io/instance: steam
+    app.kubernetes.io/name: steam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: steam
+      app.kubernetes.io/name: steam
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: steam
+        app.kubernetes.io/name: steam
+    spec:
+      nodeSelector:
+        gpu: nvidia-gtx1060
+      hostNetwork: true
+
+      # -----------------------------------------------------------------------
+      # Shared volumes — X11 socket, audio socket, input devices, game library
+      # -----------------------------------------------------------------------
+      volumes:
+        - name: dev-input
+          hostPath:
+            path: /dev/input
+        - name: udev
+          hostPath:
+            path: /run/udev
+        - name: xorg
+          hostPath:
+            path: /tmp/.X11-unix
+        - name: var-log
+          hostPath:
+            path: /var/log
+        - name: audio-socket
+          hostPath:
+            path: /tmp/pulse
+        - name: steam-home
+          hostPath:
+            path: /mnt/media/steam
+        - name: pulse-conf
+          configMap:
+            name: pulse-audio-config
+            items:
+              - key: default.pa
+                path: default.pa
+              - key: client.conf
+                path: client.conf
+              - key: daemon.conf
+                path: daemon.conf
+
+      # -----------------------------------------------------------------------
+      # Init: create home dirs on the hostPath volume with correct ownership
+      # -----------------------------------------------------------------------
+      initContainers:
+        - name: mk-steam-home-dirs
+          image: busybox:1.31.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - mkdir -p /steam-home/sunshine && chown 1000:1000 /steam-home/sunshine && mkdir -p /steam-home/steam && chown 1000:1000 /steam-home/steam
+          volumeMounts:
+            - name: steam-home
+              mountPath: /steam-home
+
+      containers:
+
+        # ===========================================================================
+        # xorg — virtual display server. Everything else renders against DISPLAY=:99
+        # ===========================================================================
+        - name: xorg
+          image: gameonwhales/xorg:latest
+          securityContext:
+            privileged: true
+          env:
+            - name: DISPLAY
+              value: ":99"
+            - name: REFRESH_RATE
+              value: "60"
+            - name: RESOLUTION
+              value: "1920x1080"
+          volumeMounts:
+            - name: dev-input
+              mountPath: /dev/input
+              readOnly: true
+            - name: udev
+              mountPath: /run/udev
+              readOnly: true
+            - name: xorg
+              mountPath: /tmp/.X11-unix
+            - name: var-log
+              mountPath: /var/log
+
+        # ===========================================================================
+        # pulseaudio — virtual audio sink, shared over a unix socket
+        # ===========================================================================
+        - name: pulseaudio
+          image: gameonwhales/pulseaudio:latest
+          volumeMounts:
+            - name: audio-socket
+              mountPath: /tmp/pulse
+            - name: pulse-conf
+              mountPath: /etc/pulse
+
+        # ===========================================================================
+        # sunshine — captures the xorg display + pulseaudio sink, encodes via
+        # NVENC, hosts the Moonlight-compatible streaming endpoint
+        # ===========================================================================
+        - name: sunshine
+          image: gameonwhales/sunshine:latest
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          ports:
+            - containerPort: 48010
+              protocol: TCP
+              hostPort: 48010
+            - containerPort: 47984
+              protocol: TCP
+              hostPort: 47984
+            - containerPort: 47985
+              protocol: TCP
+              hostPort: 47985
+            - containerPort: 47986
+              protocol: TCP
+              hostPort: 47986
+            - containerPort: 47987
+              protocol: TCP
+              hostPort: 47987
+            - containerPort: 47988
+              protocol: TCP
+              hostPort: 47988
+            - containerPort: 47989
+              protocol: TCP
+              hostPort: 47989
+            - containerPort: 47990
+              protocol: TCP
+              hostPort: 47990
+            - containerPort: 47998
+              protocol: UDP
+              hostPort: 47998
+            - containerPort: 47999
+              protocol: UDP
+              hostPort: 47999
+            - containerPort: 48000
+              protocol: UDP
+              hostPort: 48000
+          readinessProbe:
+            tcpSocket:
+              port: 47990
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          envFrom:
+            - configMapRef:
+                name: gaming-env
+            - secretRef:
+                name: sunshine-creds
+          volumeMounts:
+            - name: audio-socket
+              mountPath: /tmp/pulse
+            - name: udev
+              mountPath: /run/udev
+              readOnly: true
+            - name: xorg
+              mountPath: /tmp/.X11-unix
+            - name: steam-home
+              mountPath: /home/retro/
+              subPath: sunshine
+
+        # ===========================================================================
+        # steam — the game client itself, rendering against the shared xorg display.
+        # No separate nvidia.com/gpu request: rendering rides the /dev/dri mount
+        # shared via GOW_REQUIRED_DEVICES on sunshine, not its own GPU claim
+        # (the 1060 only has one GPU to hand out — two claims in one pod won't schedule)
+        # ===========================================================================
+        - name: steam
+          image: gameonwhales/steam:latest
+          securityContext:
+            privileged: true
+          envFrom:
+            - configMapRef:
+                name: gaming-env
+            - secretRef:
+                name: sunshine-creds
+          env:
+            - name: LOG_LEVEL
+              value: debug   # overrides gaming-env's LOG_LEVEL=info for this container
+          volumeMounts:
+            - name: audio-socket
+              mountPath: /tmp/pulse
+            - name: dev-input
+              mountPath: /dev/input
+              readOnly: true
+            - name: udev
+              mountPath: /run/udev
+              readOnly: true
+            - name: xorg
+              mountPath: /tmp/.X11-unix
+            - name: steam-home
+              mountPath: /home/retro/
+              subPath: steam
