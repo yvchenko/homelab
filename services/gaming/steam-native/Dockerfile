@@ -61,4 +61,4 @@ USER retro
 ENV HOME=/home/retro
 WORKDIR /home/retro
 
-ENTRYPOINT ["/usr/games/steam"]
+ENTRYPOINT ["/usr/games/steam", "-tenfoot", "-fulldesktopres"]
