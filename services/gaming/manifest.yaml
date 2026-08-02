@@ -106,6 +106,9 @@ spec:
           image: gameonwhales/xorg:latest
           securityContext:
             privileged: true
+          envFrom:
+            - configMapRef:
+                name: gaming-env
           env:
             - name: DISPLAY
               value: ":99"
