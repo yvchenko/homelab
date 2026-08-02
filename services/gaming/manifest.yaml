@@ -1,6 +1,4 @@
 # =============================================================================
-# gaming/manifest.yaml
-#
 # Single Pod, 4 containers (xorg, pulseaudio, sunshine, steam) sharing X11 and
 # audio sockets via hostPath volumes. Kubernetes requires all containers in a
 # Pod to live in one Deployment object — this can't be split across files
@@ -75,8 +73,6 @@ spec:
         - name: nvidia-driver
           hostPath:
             path: /opt/gow-nvidia-driver
-        - name: egl-external-platform-d
-          emptyDir: {}
         - name: steam-home
           hostPath:
             path: /mnt/media/steam
@@ -224,13 +220,13 @@ spec:
               subPath: sunshine
 
         # ===========================================================================
-        # steam — the game client itself, rendering against the shared xorg display.
-        # No separate nvidia.com/gpu request: rendering rides the /dev/dri mount
-        # shared via GOW_REQUIRED_DEVICES on sunshine, not its own GPU claim
-        # (the 1060 only has one GPU to hand out — two claims in one pod won't schedule)
+        # steam — custom-built image (services/gaming/steam-native/Dockerfile),
+        # matched to nat-server's exact NVIDIA driver version via apt packages
+        # rather than GOW's raw driver-file-copy approach, which never got
+        # glvnd vendor routing working correctly for the 32-bit client.
         # ===========================================================================
         - name: steam
-          image: gameonwhales/steam:fedora
+          image: yvchenko/steam-native:latest
           securityContext:
             privileged: true
           envFrom:
@@ -241,10 +237,6 @@ spec:
           env:
             - name: LOG_LEVEL
               value: debug   # overrides gaming-env's LOG_LEVEL=info for this container
-            - name: LD_LIBRARY_PATH
-              value: "/usr/nvidia/lib:/usr/nvidia/lib32"
-            - name: STEAM_RUNTIME_PREFER_HOST_LIBRARIES
-              value: "0"
           volumeMounts:
             - name: audio-socket
               mountPath: /tmp/pulse
@@ -258,10 +250,6 @@ spec:
               mountPath: /tmp/.X11-unix
             - name: dri
               mountPath: /dev/dri
-            - name: nvidia-driver
-              mountPath: /usr/nvidia
-            - name: egl-external-platform-d
-              mountPath: /usr/share/egl/egl_external_platform.d
             - name: steam-home
               mountPath: /home/retro/
               subPath: steam
