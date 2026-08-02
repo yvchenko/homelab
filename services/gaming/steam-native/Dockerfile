@@ -8,6 +8,9 @@
 # directory (fedora tag). apt's own nvidia packages come with correctly
 # wired glvnd config + matched 32-bit compat libs, avoiding the raw
 # file-copy approach that never got glvnd routing working.
+#
+# xorg / pulseaudio / sunshine stay as GOW images — those were solid
+# throughout. Only steam itself is replaced.
 # =============================================================================
 
 FROM ubuntu:26.04
@@ -46,6 +49,12 @@ RUN apt-get install -y --no-install-recommends \
 
 # Match GOW's convention: uid 1000, home directory is where the hostPath
 # steam-home volume gets mounted (subPath: steam)
+# Ubuntu's official base image ships a default non-root user at uid 1000
+# (usually 'ubuntu') — remove it first so uid 1000 is free for 'retro',
+# matching the uid GOW's containers and hostPath ownership already expect.
+RUN existing_user=$(getent passwd 1000 | cut -d: -f1); \
+    if [ -n "$existing_user" ]; then userdel -r "$existing_user" 2>/dev/null || userdel "$existing_user"; fi
+
 RUN useradd -m -u 1000 -s /bin/bash retro
 
 USER retro
