@@ -236,6 +236,8 @@ spec:
               value: debug   # overrides gaming-env's LOG_LEVEL=info for this container
             - name: LD_LIBRARY_PATH
               value: "/usr/nvidia/lib:/usr/nvidia/lib32"
+            - name: STEAM_RUNTIME_PREFER_HOST_LIBRARIES
+              value: "0"
           volumeMounts:
             - name: audio-socket
               mountPath: /tmp/pulse
