@@ -29,6 +29,14 @@
 # can't be edited in-place from inside the container.
 #   kubectl create configmap nvidia-device-override --namespace gaming --from-file=nvidia-device-override.conf
 #
+# dshm is an emptyDir (tmpfs) mounted at /dev/shm in the steam container.
+# The default container /dev/shm is 64M, which is too small for Chromium's
+# GPU process (Steam's UI, including Big Picture Mode, is CEF-based) to
+# allocate its shared-memory command buffers — this silently failed with
+# "Buffer Handle is null" / "AllocateRingBuffer() failed" in chrome_debug.log
+# and was the actual root cause of Steam's window rendering at 64x24
+# regardless of the underlying X11 resolution being correct.
+#
 # All three ConfigMaps + the Secret must exist in the gaming namespace before
 # this Deployment is applied.
 # =============================================================================
@@ -104,6 +112,10 @@ spec:
             items:
               - key: nvidia-device-override.conf
                 path: 15-nvidia-override.conf
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
 
       # -----------------------------------------------------------------------
       # Init: create home dirs on the hostPath volume with correct ownership
@@ -274,3 +286,5 @@ spec:
             - name: steam-home
               mountPath: /home/retro/
               subPath: steam
+            - name: dshm
+              mountPath: /dev/shm
