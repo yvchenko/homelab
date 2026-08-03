@@ -18,7 +18,19 @@
 # and never committed:
 #   kubectl create secret generic sunshine-creds --namespace gaming --from-literal=SUNSHINE_PASS=<value>
 #
-# Both must exist in the gaming namespace before this Deployment is applied.
+# nvidia-device-override ConfigMap forces the NVIDIA driver to treat DFP-0 as
+# connected and serve a 1920x1080 MetaMode on this headless GPU (no physical
+# display attached, so xrandr's usual detection + --newmode/--addmode never
+# picks anything up — NVIDIA doesn't support dynamic mode-adding via xrandr
+# the way open-source drivers do). Mounted alongside GOW's own 10-nvidia.conf
+# as a second .conf file (Xorg merges all of xorg.conf.d/*.conf), rather than
+# editing 10-nvidia.conf directly — that file is bind-mounted read-only from
+# the host's own filesystem by /ensure-nvidia-xorg-driver.sh at startup, so it
+# can't be edited in-place from inside the container.
+#   kubectl create configmap nvidia-device-override --namespace gaming --from-file=nvidia-device-override.conf
+#
+# All three ConfigMaps + the Secret must exist in the gaming namespace before
+# this Deployment is applied.
 # =============================================================================
 
 apiVersion: apps/v1
@@ -86,6 +98,12 @@ spec:
                 path: client.conf
               - key: daemon.conf
                 path: daemon.conf
+        - name: nvidia-override
+          configMap:
+            name: nvidia-device-override
+            items:
+              - key: nvidia-device-override.conf
+                path: 15-nvidia-override.conf
 
       # -----------------------------------------------------------------------
       # Init: create home dirs on the hostPath volume with correct ownership
@@ -136,6 +154,9 @@ spec:
               mountPath: /dev/dri
             - name: nvidia-driver
               mountPath: /usr/nvidia
+            - name: nvidia-override
+              mountPath: /usr/share/X11/xorg.conf.d/15-nvidia-override.conf
+              subPath: 15-nvidia-override.conf
 
         # ===========================================================================
         # pulseaudio — virtual audio sink, shared over a unix socket
