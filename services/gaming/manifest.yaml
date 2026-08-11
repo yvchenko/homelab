@@ -37,6 +37,26 @@
 # and was the actual root cause of Steam's window rendering at 64x24
 # regardless of the underlying X11 resolution being correct.
 #
+# xorg pulls from ghcr.io/games-on-whales/xorg:master rather than
+# gameonwhales/xorg:latest (Docker Hub) — the Docker Hub copy hasn't been
+# pushed to in 1+ year and is frozen on Ubuntu 21.04 (hirsute), whose repos
+# are gone entirely (apt-get update fails outright). ghcr.io carries the same
+# GOW tags actively rebuilt (~monthly); this is where GOW actually publishes
+# now. Same project/config, just the maintained registry.
+#
+# sunshine is a custom-built image (services/gaming/sunshine-native/Dockerfile)
+# for the same reason steam got one: gameonwhales/sunshine:latest is also
+# Docker-Hub-frozen, resolving to Sunshine 0.8.1 — a build old enough to
+# predate the modern KMS/NVFBC/X11 capture abstraction. On this headless
+# NVIDIA setup, 0.8.1's plain X11 capture returned blank frames for
+# GL-composited content (Steam's CEF UI), causing a black Moonlight stream
+# despite the display rendering correctly (confirmed via glxgears/glxinfo).
+# Built from the official LizardByte .deb release matched to nat-server's
+# host OS. Unlike GOW's image, this one has no startup.sh translating env
+# vars into sunshine.conf — it reads the existing persisted
+# /home/retro/sunshine/sunshine.conf directly (passed explicitly via args,
+# since the custom image's ENTRYPOINT has no default config lookup).
+#
 # All three ConfigMaps + the Secret must exist in the gaming namespace before
 # this Deployment is applied.
 # =============================================================================
@@ -138,7 +158,7 @@ spec:
         # xorg — virtual display server. Everything else renders against DISPLAY=:99
         # ===========================================================================
         - name: xorg
-          image: gameonwhales/xorg:latest
+          image: ghcr.io/games-on-whales/xorg:master
           securityContext:
             privileged: true
           envFrom:
@@ -183,10 +203,17 @@ spec:
 
         # ===========================================================================
         # sunshine — captures the xorg display + pulseaudio sink, encodes via
-        # NVENC, hosts the Moonlight-compatible streaming endpoint
+        # NVENC, hosts the Moonlight-compatible streaming endpoint.
+        # Custom-built image (services/gaming/sunshine-native/Dockerfile) —
+        # see header comment for why. args points it at the config file
+        # already persisted on the steam-home hostPath volume from prior GOW
+        # runs; this image's ENTRYPOINT is bare `sunshine` with no default
+        # config lookup or env-var-to-config translation.
         # ===========================================================================
         - name: sunshine
-          image: gameonwhales/sunshine:latest
+          image: yvchenko/sunshine-native:latest
+          args:
+            - /home/retro/sunshine/sunshine.conf
           securityContext:
             privileged: true
           resources:
