@@ -37,12 +37,17 @@
 # and was the actual root cause of Steam's window rendering at 64x24
 # regardless of the underlying X11 resolution being correct.
 #
-# xorg pulls from ghcr.io/games-on-whales/xorg:master rather than
-# gameonwhales/xorg:latest (Docker Hub) — the Docker Hub copy hasn't been
-# pushed to in 1+ year and is frozen on Ubuntu 21.04 (hirsute), whose repos
-# are gone entirely (apt-get update fails outright). ghcr.io carries the same
-# GOW tags actively rebuilt (~monthly); this is where GOW actually publishes
-# now. Same project/config, just the maintained registry.
+# xorg is pinned back to gameonwhales/xorg:latest (Docker Hub) after a
+# same-session attempt to switch to ghcr.io/games-on-whales/xorg:master —
+# that image uses a different, newer s6-overlay-based init system
+# (cont-init.d scripts) that tries to populate /usr/share/egl/... at
+# startup and fails outright against our current read-only, hostPath-mounted
+# driver-file approach. Not a quick fix; xorg was never actually broken
+# (fully working at 1920x1080 on the old image via nvidia-device-override),
+# so reverted rather than debugging two things in the same session.
+# TODO: eventually give xorg the same custom-build treatment as steam and
+# sunshine — Docker Hub's copy is 1+ year stale and frozen on EOL Ubuntu
+# 21.04 (hirsute), so it can't have packages installed for debugging either.
 #
 # sunshine is a custom-built image (services/gaming/sunshine-native/Dockerfile)
 # for the same reason steam got one: gameonwhales/sunshine:latest is also
@@ -158,7 +163,7 @@ spec:
         # xorg — virtual display server. Everything else renders against DISPLAY=:99
         # ===========================================================================
         - name: xorg
-          image: ghcr.io/games-on-whales/xorg:master
+          image: gameonwhales/xorg:latest
           securityContext:
             privileged: true
           envFrom:
@@ -219,6 +224,9 @@ spec:
           resources:
             limits:
               nvidia.com/gpu: 1
+          env:
+            - name: DISPLAY
+              value: ":99"
           ports:
             - containerPort: 48010
               protocol: TCP
