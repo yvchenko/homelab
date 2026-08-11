@@ -100,6 +100,9 @@ spec:
         - name: dev-input
           hostPath:
             path: /dev/input
+        - name: uinput
+          hostPath:
+            path: /dev/uinput
         - name: udev
           hostPath:
             path: /run/udev
@@ -283,6 +286,8 @@ spec:
               mountPath: /tmp/.X11-unix
             - name: dri
               mountPath: /dev/dri
+            - name: uinput
+              mountPath: /dev/uinput
             - name: steam-home
               mountPath: /home/retro/
               subPath: sunshine
