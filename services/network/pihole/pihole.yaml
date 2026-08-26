@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: network
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: network
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate          # hostNetwork :53 — rolling update would collide
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: nat-server
+      hostNetwork: true
+      dnsPolicy: None       # pod must NOT resolve via itself
+      dnsConfig:
+        nameservers: ["1.1.1.1", "1.0.0.1"]
+      containers:
+        - name: pihole
+          image: pihole/pihole:2026.05.0
+          env:
+            - name: TZ
+              value: "Europe/Madrid"
+            - name: FTLCONF_webserver_api_password
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-admin
+                  key: password
+            - name: FTLCONF_dns_listeningMode
+              value: "BIND"
+            - name: FTLCONF_dns_interface
+              value: "tailscale0"
+            - name: FTLCONF_dns_upstreams
+              value: "1.1.1.1;1.0.0.1;9.9.9.9"
+            - name: FTLCONF_webserver_port
+              value: "8080"
+            - name: FTLCONF_misc_etc_dnsmasq_d
+              value: "false"
+          securityContext:
+            capabilities:
+              add: ["NET_BIND_SERVICE", "NET_RAW", "CHOWN", "SYS_NICE"]
+          volumeMounts:
+            - name: etc-pihole
+              mountPath: /etc/pihole
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+      volumes:
+        - name: etc-pihole
+          hostPath:
+            path: /opt/appdata/pihole
+            type: DirectoryOrCreate
