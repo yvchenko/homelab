@@ -44,7 +44,7 @@ spec:
             - name: FTLCONF_dns_upstreams
               value: "1.1.1.1;1.0.0.1;9.9.9.9"
             - name: FTLCONF_webserver_port
-              value: "8080"
+              value: "8053"   # 8080 and 8081 are taken on nat-server
             - name: FTLCONF_misc_etc_dnsmasq_d
               value: "false"
           securityContext:
@@ -55,12 +55,12 @@ spec:
               mountPath: /etc/pihole
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: 8053
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 8053
             initialDelaySeconds: 10
       volumes:
         - name: etc-pihole
