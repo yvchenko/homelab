@@ -18,23 +18,10 @@ patches:
         value:
           - name: JELLYFIN_PublishedServerUrl
             value: http://nat-server.salmon-halfmoon.ts.net:8096
-          - name: NVIDIA_VISIBLE_DEVICES
-            value: all
           - name: NVIDIA_DRIVER_CAPABILITIES
-            value: all
+            value: video,compute,utility
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
           limits:
             nvidia.com/gpu: 1
-      - op: add
-        path: /spec/template/spec/containers/0/volumeMounts/-
-        value:
-          name: dri
-          mountPath: /dev/dri
-      - op: add
-        path: /spec/template/spec/volumes/-
-        value:
-          name: dri
-          hostPath:
-            path: /dev/dri

@@ -23,7 +23,8 @@ services/video/jellyfin/
 │   ├── deployment.yaml
 │   └── kustomization.yaml
 └── overlays/
-    ├── nat/kustomization.yaml       # GPU passthrough + published URL
+    ├── nat/kustomization.yaml       # published URL, no GPU (current default)
+    ├── nat-gpu/kustomization.yaml   # same, plus NVENC passthrough (opt-in)
     └── kostyan/kustomization.yaml   # no GPU, base config only
 ```
 
@@ -59,10 +60,19 @@ itself has no Tailscale-hostname-specific config.
 Base config lives in `base/deployment.yaml` — shared by both nodes. Each
 overlay patches in only what differs:
 
-- **`overlays/nat`**: adds `nodeSelector: {disk: nat-media}`,
-  `runtimeClassName: nvidia`, the `JELLYFIN_PublishedServerUrl` env var, GPU
-  env vars, a `resources.limits.nvidia.com/gpu: 1` request, and the
-  `/dev/dri` device mount.
+- **`overlays/nat`**: adds `nodeSelector: {disk: nat-media}` and the
+  `JELLYFIN_PublishedServerUrl` env var. No GPU passthrough — this is the
+  current default on nat-server (software transcoding only).
+- **`overlays/nat-gpu`**: everything in `overlays/nat`, plus
+  `runtimeClassName: nvidia`, `NVIDIA_DRIVER_CAPABILITIES: video,compute,utility`
+  (video for NVENC/NVDEC, compute for CUDA filters like HDR tonemapping,
+  utility for `nvidia-smi` — deliberately not `all`, which also pulls in
+  graphics/display capabilities this headless transcode-only container never
+  uses), and a `resources.limits.nvidia.com/gpu: 1` request. No `/dev/dri`
+  mount — that's a VAAPI (Intel/AMD) device node; NVIDIA's own devices are
+  injected automatically by `nvidia-container-runtime` based on the GPU
+  resource request. Both overlays use `nameSuffix: "-nat"`, so apply one or
+  the other, never both.
 - **`overlays/kostyan`**: adds only `nodeSelector: {disk: kostyan-media}` —
   no GPU passthrough (kostyan-server's AMD 7750 is VAAPI decode-only, not
   wired up here yet).
@@ -70,15 +80,19 @@ overlay patches in only what differs:
 Apply with `-k` (Kustomize mode), not `-f`:
 
 ```bash
-sudo k3s kubectl apply -k services/video/jellyfin/overlays/nat
+sudo k3s kubectl apply -k services/video/jellyfin/overlays/nat        # no GPU (default)
+# or, for NVENC:
+sudo k3s kubectl apply -k services/video/jellyfin/overlays/nat-gpu
 sudo k3s kubectl apply -k services/video/jellyfin/overlays/kostyan
 ```
 
 ## Hardware transcoding (nat-server)
 
-nat-server uses NVENC via the GTX 1060 3GB. Host-level prerequisites are
-unchanged from before — the driver and container toolkit still need to be
-installed directly on the node, independent of k8s:
+nat-server can use NVENC via the GTX 1060 3GB by applying `overlays/nat-gpu`
+instead of `overlays/nat` — currently disabled (running the plain `nat`
+overlay) after the GPU turned out to be needed elsewhere. Host-level
+prerequisites are unchanged from before — the driver and container toolkit
+still need to be installed directly on the node, independent of k8s:
 
 ```bash
 # Install NVIDIA drivers
