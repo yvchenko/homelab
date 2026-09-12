@@ -56,7 +56,7 @@ into the library:
 | `/mnt/media/suwayomi/mangas/<source-site>/<series-name>/` | Suwayomi's download structure (staging area, not a library) |
 | `/mnt/media/manga/<series-name>/` | Flat per-series structure Kavita scans as a library |
 
-**Script**: `services/reading-library/suwayomi-move.sh`
+**Script**: `services/reading-library/suwayomi-move/suwayomi-move.sh`
 
 - Merges all source-site variants of a series into one destination folder
   (e.g. a series downloaded from both Mangadex and Asura Scans lands in a
@@ -75,7 +75,7 @@ used everywhere else in this migration:
 ```bash
 sudo k3s kubectl create configmap suwayomi-move-script \
   --namespace reading-library \
-  --from-file=suwayomi-move.sh=services/reading-library/suwayomi-move.sh
+  --from-file=suwayomi-move.sh=services/reading-library/suwayomi-move/suwayomi-move.sh
 
 sudo k3s kubectl apply -f services/reading-library/suwayomi-move/manifest.yaml
 ```
