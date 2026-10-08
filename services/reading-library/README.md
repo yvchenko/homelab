@@ -1,6 +1,6 @@
 # Reading Library
 
-Manga, manhwa, ebook, and comic library stack. Runs on `kostyan-server`.
+Manga, manhwa, ebook, and comic library stack. Runs on `nat-server`.
 Accessible over Tailscale only — not exposed to the public internet.
 
 Suwayomi downloads chapters from web sources; Kavita serves the resulting
@@ -16,7 +16,7 @@ layout Kavita (and eventually Komga) expects as a library.
 | Suwayomi | `ghcr.io/suwayomi/suwayomi-server:stable` | Manga/manhwa downloader (Tachiyomi/Mihon extension ecosystem) |
 
 Both run as k8s Deployments in the `reading-library` namespace, single
-instance each, pinned to `kostyan-server` (`nodeSelector: disk: kostyan-media`).
+instance each, pinned to `nat-server` (`nodeSelector: disk: nat-media`).
 
 **Kavita image note**: switched from `jvmilazz0/kavita` to
 `lscr.io/linuxserver/kavita` for more active maintenance/security patching.
@@ -93,7 +93,7 @@ sudo k3s kubectl get pods -n reading-library -o wide | grep suwayomi-move
 
 Suwayomi runs with `hostNetwork: true` and reaches FlareSolverr via
 `http://localhost:8191` — FlareSolverr's own pod (part of `media-download/`'s
-arr-stack DaemonSet) already runs on kostyan-server with `hostNetwork: true`
+arr-stack DaemonSet) already runs on nat-server with `hostNetwork: true`
 too, so both share the same real network namespace and `localhost` genuinely
 resolves to the same host. **No cross-namespace Service reference needed,
 and no startup-order dependency on `media-download/` being up first** — this
@@ -186,7 +186,7 @@ directory from the source machine before starting the deployment.
 ```powershell
 # On the source machine (Windows)
 Compress-Archive -Path C:\homelab\kavita -DestinationPath C:\homelab\kavita-backup.zip
-scp C:\homelab\kavita-backup.zip nat@kostyan-server.salmon-halfmoon.ts.net:/home/nat/kavita-backup.zip
+scp C:\homelab\kavita-backup.zip nat@nat-server.salmon-halfmoon.ts.net:/home/nat/kavita-backup.zip
 ```
 
 ```bash
@@ -209,7 +209,7 @@ sudo k3s kubectl apply -f services/reading-library/kavita/manifest.yaml
   tag bump.
 - **Suwayomi permissions**: do not `chown 1000:1000` its appdata/downloads
   mount — it needs world-writable dirs (`chmod 777`) for arbitrary container
-  UIDs. This is the one path under `/mnt/media` on kostyan-server that
+  UIDs. This is the one path under `/mnt/media` on nat-server that
   deliberately doesn't follow the standard `grim:grim` ownership.
 - **Series name matching**: `suwayomi-move.sh` merges by exact folder name
   match. Inconsistent naming across scrapers/sources produces separate,

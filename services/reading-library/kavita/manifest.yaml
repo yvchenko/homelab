@@ -14,7 +14,7 @@ spec:
         app: kavita
     spec:
       nodeSelector:
-        disk: kostyan-media
+        disk: nat-media
       containers:
       - name: kavita
         image: lscr.io/linuxserver/kavita:0.8.9

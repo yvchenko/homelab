@@ -12,7 +12,7 @@ spec:
         spec:
           restartPolicy: OnFailure
           nodeSelector:
-            disk: kostyan-media
+            disk: nat-media
           containers:
           - name: suwayomi-move
             image: bash:5

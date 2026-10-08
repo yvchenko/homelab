@@ -23,7 +23,7 @@ spec:
         searches:
           - salmon-halfmoon.ts.net
       nodeSelector:
-        disk: kostyan-media
+        disk: nat-media
       containers:
       - name: suwayomi
         image: ghcr.io/suwayomi/suwayomi-server:stable
