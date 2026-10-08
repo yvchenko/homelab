@@ -1,0 +1,12 @@
+resources:
+  - ../../base
+nameSuffix: "-kostyan"
+patches:
+  - target:
+      kind: CronJob
+      name: suwayomi-move
+    patch: |-
+      - op: add
+        path: /spec/jobTemplate/spec/template/spec/nodeSelector
+        value:
+          disk: kostyan-media

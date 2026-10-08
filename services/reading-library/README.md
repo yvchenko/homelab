@@ -1,7 +1,10 @@
 # Reading Library
 
-Manga, manhwa, ebook, and comic library stack. Runs on `nat-server`.
-Accessible over Tailscale only — not exposed to the public internet.
+Manga, manhwa, ebook, and comic library stack. Runs on Kostya's node
+(`kostyan-server`) and on Nat's node (`nat-server`) simultaneously — two
+independent instances, each with its own separate library and download
+queue, not a shared one (same philosophy as `video/jellyfin`). Accessible
+over Tailscale only — not exposed to the public internet.
 
 Suwayomi downloads chapters from web sources; Kavita serves the resulting
 library for reading. They don't talk to each other directly — a scheduled
@@ -15,8 +18,34 @@ layout Kavita (and eventually Komga) expects as a library.
 | Kavita | `lscr.io/linuxserver/kavita:0.8.9` | Manga/ebook/comic reader and library server |
 | Suwayomi | `ghcr.io/suwayomi/suwayomi-server:stable` | Manga/manhwa downloader (Tachiyomi/Mihon extension ecosystem) |
 
-Both run as k8s Deployments in the `reading-library` namespace, single
-instance each, pinned to `nat-server` (`nodeSelector: disk: nat-media`).
+Each component — Kavita, Suwayomi, and the `suwayomi-move` CronJob — is two
+k8s Deployments/CronJobs in the shared `reading-library` namespace:
+`<name>-kostyan` and `<name>-nat`, generated from a single shared Kustomize
+base plus a small per-node overlay, same structure as `video/jellyfin`:
+
+```
+services/reading-library/
+├── kavita/
+│   ├── base/
+│   │   ├── deployment.yaml
+│   │   └── kustomization.yaml
+│   └── overlays/
+│       ├── kostyan/kustomization.yaml   # nodeSelector: disk: kostyan-media
+│       └── nat/kustomization.yaml       # nodeSelector: disk: nat-media
+├── suwayomi/                            # same base + overlays layout
+└── suwayomi-move/                       # same base + overlays layout (CronJob)
+```
+
+Apply with `-k` (Kustomize mode), one overlay per node:
+
+```bash
+sudo k3s kubectl apply -k services/reading-library/kavita/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/kavita/overlays/nat
+sudo k3s kubectl apply -k services/reading-library/suwayomi/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/suwayomi/overlays/nat
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/nat
+```
 
 **Kavita image note**: switched from `jvmilazz0/kavita` to
 `lscr.io/linuxserver/kavita` for more active maintenance/security patching.
@@ -77,28 +106,33 @@ sudo k3s kubectl create configmap suwayomi-move-script \
   --namespace reading-library \
   --from-file=suwayomi-move.sh=services/reading-library/suwayomi-move/suwayomi-move.sh
 
-sudo k3s kubectl apply -f services/reading-library/suwayomi-move/manifest.yaml
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/nat
 ```
 
-Schedule is set in the manifest itself (`schedule: "0 4 * * *"`, matching
+The `ConfigMap` is created once in the namespace and shared by both
+CronJobs — it's just the script, not per-node data.
+
+Schedule is set in the base CronJob (`schedule: "0 4 * * *"`, matching
 the original daily 04:00 timing), not in a separate crontab.
 
 ```bash
-# manual run, outside the schedule
-sudo k3s kubectl create job --from=cronjob/suwayomi-move suwayomi-move-manual -n reading-library
+# manual run, outside the schedule — pick the node's CronJob
+sudo k3s kubectl create job --from=cronjob/suwayomi-move-kostyan suwayomi-move-kostyan-manual -n reading-library
+sudo k3s kubectl create job --from=cronjob/suwayomi-move-nat suwayomi-move-nat-manual -n reading-library
 sudo k3s kubectl get pods -n reading-library -o wide | grep suwayomi-move
 ```
 
 ## Networking
 
 Suwayomi runs with `hostNetwork: true` and reaches FlareSolverr via
-`http://localhost:8191` — FlareSolverr's own pod (part of `media-download/`'s
-arr-stack DaemonSet) already runs on nat-server with `hostNetwork: true`
-too, so both share the same real network namespace and `localhost` genuinely
-resolves to the same host. **No cross-namespace Service reference needed,
-and no startup-order dependency on `media-download/` being up first** — this
-replaces the old Compose setup's external `media_download` network
-attachment entirely.
+`http://localhost:8191` — FlareSolverr is a DaemonSet (part of
+`media-download/`'s arr-stack) with `hostNetwork: true` running on **both**
+nodes, so on either node `localhost` genuinely resolves to a pod sharing
+that same real network namespace. **No cross-namespace Service reference
+needed, and no startup-order dependency on `media-download/` being up
+first** — this replaces the old Compose setup's external `media_download`
+network attachment entirely.
 
 Suwayomi's `hostNetwork` pod also carries the same `dnsPolicy: None` +
 explicit `dnsConfig` fix used across every `hostNetwork` workload in this
@@ -106,10 +140,14 @@ cluster (Tailscale's resolver + a public fallback) — needed since Suwayomi
 fetches from real manga/manhwa sites over the internet.
 
 Kavita has no network dependency on anything else and doesn't use
-`hostNetwork` — just a plain `hostPort: 5000` to keep it reachable at the
-same address as before.
+`hostNetwork` — just a plain `hostPort: 5000` on each node. Since the two
+instances run on different physical nodes, both can use the same container
+port with no conflict.
 
 ## First run
+
+Run the directory setup on **each node** you're bringing up (`kostyan-media`
+and `nat-media` are independent disks — nothing here is shared between them).
 
 ### Kavita config
 
@@ -132,9 +170,12 @@ mkdir -p /mnt/media/suwayomi && chmod -R 777 /mnt/media/suwayomi
 
 ```bash
 sudo k3s kubectl create namespace reading-library
-sudo k3s kubectl apply -f services/reading-library/kavita/manifest.yaml
-sudo k3s kubectl apply -f services/reading-library/suwayomi/manifest.yaml
-sudo k3s kubectl apply -f services/reading-library/suwayomi-move/manifest.yaml
+sudo k3s kubectl apply -k services/reading-library/kavita/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/kavita/overlays/nat
+sudo k3s kubectl apply -k services/reading-library/suwayomi/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/suwayomi/overlays/nat
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/kostyan
+sudo k3s kubectl apply -k services/reading-library/suwayomi-move/overlays/nat
 sudo k3s kubectl get pods -n reading-library -o wide
 ```
 
@@ -145,6 +186,10 @@ sudo k3s kubectl logs -n reading-library <pod-name> -f
 ```
 
 ## Post-setup — required
+
+Each instance (`-kostyan` and `-nat`) needs this done independently — they
+are separate libraries with their own users and extensions, not shared
+state.
 
 ### Kavita:
 1. The first user to register becomes the admin.
@@ -181,22 +226,34 @@ https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json
 ## Migrating Kavita from another instance
 
 To carry over user data, reading progress, and bookmarks, copy the config
-directory from the source machine before starting the deployment.
+directory from the source machine before starting the deployment. (This is
+for seeding a node from an external backup — the two in-cluster instances
+deliberately do **not** share data with each other; see the data-migration
+note below if you actually want to move/merge one node's library into the
+other's.)
 
 ```powershell
 # On the source machine (Windows)
 Compress-Archive -Path C:\homelab\kavita -DestinationPath C:\homelab\kavita-backup.zip
-scp C:\homelab\kavita-backup.zip nat@nat-server.salmon-halfmoon.ts.net:/home/nat/kavita-backup.zip
+scp C:\homelab\kavita-backup.zip nat@<target-host>.salmon-halfmoon.ts.net:/home/nat/kavita-backup.zip
 ```
 
 ```bash
-# On target server
+# On the target node
 unzip ~/kavita-backup.zip -d ~/kavita-extract
 sudo cp -r ~/kavita-extract/kavita/* /opt/appdata/kavita/
 
-# Then apply the manifest
-sudo k3s kubectl apply -f services/reading-library/kavita/manifest.yaml
+# Then apply that node's overlay
+sudo k3s kubectl apply -k services/reading-library/kavita/overlays/<kostyan|nat>
 ```
+
+**Note (2026-10-08):** an attempt was made to migrate kostyan-server's
+existing Kavita/Suwayomi library onto nat-server wholesale (not just seed
+a backup) — `/opt/appdata/kavita` was partially rsynced over before the
+effort was paused. That data migration is parked for later; what actually
+shipped instead is the two-independent-instances setup described in this
+README. nat-server's instance starts empty, so `/opt/appdata/kavita` on
+nat-server was wiped before first run — see "First run" above.
 
 ## Known gotchas
 
@@ -209,7 +266,7 @@ sudo k3s kubectl apply -f services/reading-library/kavita/manifest.yaml
   tag bump.
 - **Suwayomi permissions**: do not `chown 1000:1000` its appdata/downloads
   mount — it needs world-writable dirs (`chmod 777`) for arbitrary container
-  UIDs. This is the one path under `/mnt/media` on nat-server that
+  UIDs. This is the one path under `/mnt/media` on either node that
   deliberately doesn't follow the standard `grim:grim` ownership.
 - **Series name matching**: `suwayomi-move.sh` merges by exact folder name
   match. Inconsistent naming across scrapers/sources produces separate,
