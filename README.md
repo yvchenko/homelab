@@ -33,10 +33,13 @@ isn't owned by either.
 
 ### reading-library
 
-| Service   | kostyan-server                                     |
-|-----------|-------------------------------------------------------|
-| Kavita    | http://kostyan-server.salmon-halfmoon.ts.net:5000   |
-| Suwayomi  | http://kostyan-server.salmon-halfmoon.ts.net:4567   |
+| Service   | kostyan-server                                     | nat-server                                     |
+|-----------|-------------------------------------------------------|---------------------------------------------------|
+| Kavita    | http://kostyan-server.salmon-halfmoon.ts.net:5000   | http://nat-server.salmon-halfmoon.ts.net:5000   |
+| Suwayomi  | http://kostyan-server.salmon-halfmoon.ts.net:4567   | http://nat-server.salmon-halfmoon.ts.net:4567   |
+
+Two independent instances, same as `video`/Jellyfin — separate libraries,
+separate download queues, no shared data between nodes.
 
 ### sandbox
 
