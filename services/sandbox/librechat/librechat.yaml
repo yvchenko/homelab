@@ -45,9 +45,6 @@ endpoints:
       titleModel: 'current_model'
       dropParams: ['stop']
       modelDisplayLabel: 'OpenRouter'
-#      addParams:
-#        reasoning:
-#          max_tokens: 20000
 
     - name: "Moonshot AI"
       apiKey: "user_provided"
