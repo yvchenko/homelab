@@ -46,6 +46,22 @@ endpoints:
       dropParams: ['stop']
       modelDisplayLabel: 'OpenRouter'
 
+    - name: 'GLM 5.3 [capped]'
+      apiKey: 'user_provided'
+      baseURL: 'https://openrouter.ai/api/v1'
+      models:
+        default: [
+          "z-ai/glm-5.3",
+        ]
+        fetch: false
+      titleConvo: true
+      titleModel: 'current_model'
+      dropParams: [ 'stop' ]
+      modelDisplayLabel: 'GLM 5.3 [capped]'
+      addParams:
+        reasoning:
+          max_tokens: 2000
+
     - name: "Moonshot AI"
       apiKey: "user_provided"
       baseURL: "https://api.moonshot.ai/v1"
