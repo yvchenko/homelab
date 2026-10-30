@@ -60,7 +60,7 @@ endpoints:
       modelDisplayLabel: 'GLM 5.3 [capped]'
       addParams:
         reasoning:
-          max_tokens: 2000
+          max_tokens: 5000
 
     - name: "Moonshot AI"
       apiKey: "user_provided"
