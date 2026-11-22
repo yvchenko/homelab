@@ -6,8 +6,9 @@ Cross-node file replication and co-viewing infrastructure between nat-server
 
 - **syncthing** — replicates `shared/` and `cloud/` between both nodes,
   Send & Receive on both sides.
-- **filebrowser** — Drive-like web UI over `cloud/`: upload, browse, and
-  download from any device, no client install required.
+- **nextcloud** — Drive-like web UI (plus desktop/mobile sync clients) over
+  `cloud/`, which it mounts as Local external storage so Syncthing stays the
+  replication layer.
 - **syncplay** — relay server for synchronized local playback. Carries only
   play/pause/seek/position messages, never media bytes. Each side reads its
   own local, Syncthing-replicated copy of the file in VLC, keeping
@@ -28,7 +29,7 @@ instance — each side's client connects to its own node's relay.
 | Service     | Image                             | Purpose                                         | k8s primitive |
 | ----------- | ---------------------------------- | ------------------------------------------------ | -------------- |
 | syncthing   | `syncthing/syncthing:latest`       | Cross-node folder replication                   | Kustomize base + per-node overlay |
-| filebrowser | `filebrowser/filebrowser:latest`   | Web upload/browse UI over `cloud/`              | DaemonSet |
+| nextcloud   | `lscr.io/linuxserver/nextcloud:latest` + `postgres:17-alpine` sidecar | Web/sync-client UI over `cloud/` | DaemonSet |
 | syncplay    | `dnomd343/syncplay:latest`         | Playback-event relay for synced watching        | DaemonSet |
 | samba       | `dockurr/samba:latest`             | SMB share over `shared/` for non-synced devices | Kustomize base + per-node overlay |
 
@@ -40,30 +41,28 @@ same labels used across the whole homelab).
 **Syncthing and Samba use Kustomize** because their pod specs genuinely
 differ per node (hostname suffix/timezone for Syncthing; bind IP and
 credentials for Samba) — same base+overlay pattern used for Jellyfin.
-**Filebrowser and Syncplay are plain DaemonSets**, since neither has any
-per-node configuration difference; the shared `media-sync=true` label is
-enough to run one identical pod on each node.
+**Nextcloud and Syncplay are plain DaemonSets**, since neither has any
+per-node configuration difference in the pod spec; the shared
+`media-sync=true` label is enough to run one identical pod on each node.
+Each node's Nextcloud is fully independent (own users, own database, own
+config) — only the files under `cloud/` are shared, via Syncthing.
 
 ## Paths
 
 | Path                          | Purpose                                         |
 | ------------------------------ | ------------------------------------------------ |
 | `/opt/appdata/syncthing`       | Syncthing config and index database             |
-| `/opt/appdata/filebrowser`     | Filebrowser SQLite database                     |
+| `/opt/appdata/nextcloud/config` | Nextcloud app + `config.php`                   |
+| `/opt/appdata/nextcloud/data`   | Nextcloud data dir (per-user home folders)     |
+| `/opt/appdata/nextcloud/db`     | Postgres sidecar data                          |
 | `/opt/appdata/syncplay`        | Syncplay persistent room/stats data             |
 | `/mnt/media/shared`            | Synced folder — co-viewing content              |
 | `/mnt/media/cloud`             | Synced folder — general Drive-like storage      |
 
-All mounted via `hostPath`. Filebrowser's `settings.json` is no longer a
-bind-mounted repo file directly — it's loaded into a `ConfigMap` from the
-same committed file and mounted from there (`--from-file`, same convention
-used for every other static config file in this migration):
-
-```bash
-sudo k3s kubectl create configmap filebrowser-settings \
-  --namespace media-sync \
-  --from-file=settings.json=services/media-sync/filebrowser/settings.json
-```
+All mounted via `hostPath`. Nextcloud's `/mnt/media/cloud` mount uses
+`type: Directory`, so if the folder is ever missing the pod fails to start
+instead of kubelet silently fabricating an empty `root:root` dir in its
+place (the failure mode behind the 2026-09-12 `cloud/` data loss).
 
 ## Secrets
 
@@ -84,7 +83,14 @@ sudo k3s kubectl create secret generic samba-credentials-kostyan \
   --namespace media-sync \
   --from-literal=USER='grim' \
   --from-literal=PASS='...'
+
+sudo k3s kubectl create secret generic nextcloud-db-credentials \
+  --namespace media-sync \
+  --from-literal=POSTGRES_PASSWORD='...'
 ```
+
+The Nextcloud DB password is only read by the Postgres sidecar; you type the
+same value into Nextcloud's first-run wizard (see Post-startup steps).
 
 **Samba's Secret keys must be named `USER`/`PASS`, not `USER`/`PASSWORD`.**
 The `dockurr/samba` image specifically expects an env var literally named
@@ -106,14 +112,15 @@ sudo k3s kubectl label node nat-server media-sync=true
 sudo k3s kubectl label node gwserver media-sync=true
 
 mkdir -p /mnt/media/shared /mnt/media/cloud
-sudo mkdir -p /opt/appdata/syncthing /opt/appdata/filebrowser /opt/appdata/syncplay
+sudo mkdir -p /opt/appdata/syncthing /opt/appdata/syncplay \
+  /opt/appdata/nextcloud/config /opt/appdata/nextcloud/data /opt/appdata/nextcloud/db
 sudo chown -R 1000:1000 /mnt/media/shared /mnt/media/cloud \
-  /opt/appdata/syncthing /opt/appdata/filebrowser /opt/appdata/syncplay
+  /opt/appdata/syncthing /opt/appdata/syncplay /opt/appdata/nextcloud
 
 sudo k3s kubectl create namespace media-sync
-# ...create the Secrets and ConfigMap from above...
+# ...create the Secrets from above...
 
-sudo k3s kubectl apply -f services/media-sync/filebrowser/manifest.yaml
+sudo k3s kubectl apply -f services/media-sync/nextcloud/manifest.yaml
 sudo k3s kubectl apply -f services/media-sync/syncplay/manifest.yaml
 sudo k3s kubectl apply -k services/media-sync/syncthing/overlays/nat
 sudo k3s kubectl apply -k services/media-sync/syncthing/overlays/kostyan
@@ -149,8 +156,9 @@ This preserves the exact same tailnet-only binding Docker's `SAMBA_HOST_IP`
 was enforcing — the pod keeps its own network namespace, only the
 host-side port publish is IP-restricted.
 
-**Filebrowser** just uses a plain `hostPort: 8082`, no IP restriction — same
-as its original unrestricted port mapping.
+**Nextcloud** uses a plain `hostPort: 8082` (the port Filebrowser used to
+have), no IP restriction. The Postgres sidecar runs with
+`listen_addresses=localhost`, so it's only reachable from inside the pod.
 
 ## Post-startup steps
 
@@ -172,14 +180,21 @@ as its original unrestricted port mapping.
    identically on nat-server's and kostyan-server's qBittorrent instances,
    since either node can originate a grab.
 
-5. **Point Filebrowser's root at `/srv`** (already set in
-   `filebrowser/settings.json`). Filebrowser generates a random admin
-   password on first boot and prints it to the pod logs — retrieve it with
-   `kubectl logs -n media-sync <filebrowser-pod-name> | grep -i password`
-   and change it on first login. **See the database-compatibility gotcha
-   below before assuming a login failure means the wrong password.**
+5. **Run Nextcloud's first-run wizard on each node** at
+   `http://<node>.salmon-halfmoon.ts.net:8082`: create the admin account,
+   pick **PostgreSQL**, user `nextcloud`, password from
+   `nextcloud-db-credentials`, database `nextcloud`, host `localhost`.
+   Leave the data folder as `/data`. The hostname you open the wizard from
+   is added to `trusted_domains` automatically.
 
-6. **Verify Syncplay connectivity from both clients** before a watch
+6. **Mount `cloud/` as external storage.** Apps → enable *External storage
+   support*, then Administration → External storage: add a **Local** mount,
+   folder name `cloud`, configuration `/cloud`, available for the users who
+   should see it. Under its advanced options set *Check for changes* to
+   **Once every direct access** so files Syncthing drops in show up without
+   a manual `occ files:scan`.
+
+7. **Verify Syncplay connectivity from both clients** before a watch
    session: Kostyan's Linux Syncplay client + VLC, and Synkplay on iOS
    (sideloaded via AltStore) — each pointed at its own node's relay. On
    iOS, use the VLCKit engine with a locally downloaded copy of the file
@@ -187,75 +202,34 @@ as its original unrestricted port mapping.
 
 ## Known gotchas
 
-- **Filebrowser: an existing database created by an older image version can
-  make every login fail with `403 Forbidden`, permanently, even after a
-  password reset — this is a real bug, not a credentials problem.**
-  Root cause: the current FileBrowser binary uses a
-  different/incompatible credential-validation format than whatever older
-  version quietly created the file under Docker (containers don't
-  self-update, so an old binary can run for a long time undetected). **A
-  CLI password reset does not fix this** — the validation logic itself,
-  not the stored value, is the problem. **Fix: rename the old database
-  aside (don't delete) and let a fresh one generate:**
+- **Nextcloud can't skip major versions on upgrade.** The linuxserver image
+  is on `:latest`, and an image bump that jumps more than one Nextcloud major
+  (e.g. after the node sat un-updated for a long time) leaves the instance
+  refusing to start its upgrade. If that happens, pin the image to the next
+  major's tag, let it upgrade, then step forward. Same idea for the
+  `postgres:17` sidecar: a Postgres major bump needs a dump/restore, so that
+  tag is deliberately pinned.
+
+- **`occ` must run as the `abc` user.** Running it as root fails or leaves
+  root-owned files under `/config`:
   ```bash
-  mv /opt/appdata/filebrowser/filebrowser.db /opt/appdata/filebrowser/filebrowser.db.old
+  sudo k3s kubectl exec -n media-sync <nextcloud-pod> -c nextcloud -- \
+    occ files:scan --all
   ```
-  then delete the pod so it starts clean and check the logs for the
-  auto-generated first-run admin credentials.
+  (linuxserver's image ships an `occ` wrapper that already switches to
+  `abc`.)
 
-- **Resetting a Filebrowser password (or running any CLI command) against
-  a live pod's database will time out** — the running server already holds
-  a lock on the SQLite file, and even `kubectl exec`-ing into the *same*
-  container doesn't help, since the CLI is still a separate process
-  competing for the same lock. **Fix: pull the node out of the DaemonSet
-  temporarily**, run a throwaway maintenance pod mounting the same
-  `hostPath`, do the CLI work there, then restore the label:
-  ```bash
-  sudo k3s kubectl label node nat-server media-sync-   # remove the label
-
-  sudo k3s kubectl run filebrowser-maintenance --rm -it \
-    --image=filebrowser/filebrowser:latest \
-    --namespace=media-sync \
-    --overrides='{
-      "spec": {
-        "nodeSelector": {"disk": "nat-media"},
-        "containers": [{
-          "name": "filebrowser-maintenance",
-          "image": "filebrowser/filebrowser:latest",
-          "command": ["sh"], "stdin": true, "tty": true,
-          "volumeMounts": [{"name": "database", "mountPath": "/database"}]
-        }],
-        "volumes": [{"name": "database", "hostPath": {"path": "/opt/appdata/filebrowser"}}]
-      }
-    }'
-  # inside the shell:
-  filebrowser -d /database/filebrowser.db users ls
-  filebrowser -d /database/filebrowser.db users update <username> --password=<new-password>
-  exit
-
-  sudo k3s kubectl label node nat-server media-sync=true   # restore the label
-  ```
-  Note the explicit `-d /database/filebrowser.db` flag — running the CLI
-  with no flags defaults to looking for `./filebrowser.db` in the current
-  directory and fails with a confusing "does not exist, run config init"
-  error even though the real file exists at the correct mounted path.
-
-- **Filebrowser enforces a 12-character minimum password by default.** To
-  keep a shorter existing password across the reset, add
-  `--minimumPasswordLength=1` to the `users update` command above — this
-  only affects that one write, not a persistent server-wide setting.
+- **Files under `cloud/` only appear via the external-storage mount, not
+  in users' home folders.** Uploading to a user's own space writes to
+  `/opt/appdata/nextcloud/data`, which Syncthing does *not* replicate.
+  Upload into the `cloud` folder for anything that should exist on both
+  nodes.
 
 - **Two-way folder conflicts.** With Send & Receive on both sides, if both
   nodes grab the same file independently around the same time, Syncthing
   creates a `.sync-conflict-<date>-<time>` copy rather than silently
   picking one. Check the folder before grabbing something to avoid
   duplicate downloads.
-
-- **Filebrowser's `settings.json` only applies on first container start.**
-  Since it's now a mounted ConfigMap, edit the source file, re-run the
-  `create configmap` command (or `kubectl apply` if it's defined as YAML),
-  then delete the pod to force a fresh read — a plain restart of the same
-  running pod is not sufficient, same as under Compose.
 
 - **Syncplay has no persistent per-room auth.** `PASSWORD` in the Secret
   gates the entire server, not individual rooms — adequate for a
