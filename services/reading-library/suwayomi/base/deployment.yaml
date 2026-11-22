@@ -24,7 +24,7 @@ spec:
           - salmon-halfmoon.ts.net
       containers:
       - name: suwayomi
-        image: ghcr.io/suwayomi/suwayomi-server:stable
+        image: ghcr.io/suwayomi/suwayomi-server:v2.4.2373
         env:
         - name: TZ
           value: Europe/Kiev
